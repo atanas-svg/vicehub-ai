@@ -43,6 +43,7 @@ function getViceReply(question: string) {
 export default function AskViceChat() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [thinking, setThinking] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "vice",
@@ -54,7 +55,6 @@ export default function AskViceChat() {
 
   useEffect(() => {
     const openChat = () => setOpen(true);
-
     window.addEventListener("open-ask-vice", openChat);
 
     return () => {
@@ -64,21 +64,25 @@ export default function AskViceChat() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, thinking]);
 
   function sendMessage(value?: string) {
     const message = (value ?? input).trim();
 
-    if (!message) return;
+    if (!message || thinking) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", text: message },
-      { role: "vice", text: getViceReply(message) },
-    ]);
-
+    setMessages((prev) => [...prev, { role: "user", text: message }]);
     setInput("");
     setOpen(true);
+    setThinking(true);
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { role: "vice", text: getViceReply(message) },
+      ]);
+      setThinking(false);
+    }, 800);
   }
 
   return (
@@ -114,6 +118,13 @@ export default function AskViceChat() {
                 {message.text}
               </div>
             ))}
+
+            {thinking && (
+              <div className="mr-auto max-w-[85%] rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-300">
+                <span className="text-pink-400">Vice</span> is thinking...
+              </div>
+            )}
+
             <div ref={bottomRef} />
           </div>
 
@@ -143,7 +154,8 @@ export default function AskViceChat() {
 
               <button
                 onClick={() => sendMessage()}
-                className="rounded-2xl bg-pink-600 px-4 py-3 text-sm font-bold text-white hover:bg-pink-500"
+                disabled={thinking}
+                className="rounded-2xl bg-pink-600 px-4 py-3 text-sm font-bold text-white hover:bg-pink-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Send
               </button>
