@@ -53,7 +53,7 @@ export default function FeatureGrid() {
         {features.map((feature) => (
           <div
             key={feature.title}
-            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(236,72,153,0.18)]"
+            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition duration-300 hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(236,72,153,0.18)]"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-cyan-400/10 opacity-0 transition duration-300 group-hover:opacity-100" />
 
