@@ -1,31 +1,70 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+type Message = {
+  role: "user" | "vice";
+  text: string;
+};
 
 const quickPrompts = [
   "How do I make money fast?",
   "Best vehicle to buy first?",
-  "Help me plan my next move",
+  "Where should I start?",
+  "Help me with weapons",
 ];
+
+function getViceReply(question: string) {
+  const q = question.toLowerCase();
+
+  if (q.includes("money") || q.includes("cash") || q.includes("earn")) {
+    return "Money plan: focus on high-value missions first, avoid buying expensive cars early, save for income assets, and only upgrade weapons you actually use. Soon I will calculate the best route based on your progress.";
+  }
+
+  if (q.includes("vehicle") || q.includes("car") || q.includes("bike")) {
+    return "Vehicle advice: your first priority should be speed + handling, not just looks. In the full version I will compare cars by price, speed, unlock level and Vice Score.";
+  }
+
+  if (q.includes("weapon") || q.includes("gun") || q.includes("loadout")) {
+    return "Weapon plan: keep one close-range weapon, one long-range option and one explosive tool. Later I will show best loadouts for missions, police chases and online activities.";
+  }
+
+  if (q.includes("map") || q.includes("where") || q.includes("location")) {
+    return "Map help: soon I will connect to the ViceHub interactive map and show missions, secrets, collectibles and important locations directly inside the hub.";
+  }
+
+  if (q.includes("start") || q.includes("next") || q.includes("plan")) {
+    return "Smart plan: finish early story missions, collect easy rewards, avoid wasting cash, then unlock vehicles and weapons in the right order. Later I will build a personal step-by-step plan for your save.";
+  }
+
+  return "Good question. I am still a prototype, but the goal is clear: I will become a GTA 6 assistant that gives fast answers, money plans, mission help, vehicle advice and 100% completion guidance.";
+}
 
 export default function AskViceChat() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       role: "vice",
-      text: "Welcome to ViceHub. Ask me anything about GTA 6. For now I am a demo assistant, but soon I will become the real Vice AI.",
+      text: "Welcome to ViceHub. Ask me anything about GTA 6. I am still a prototype, but every version will get smarter.",
     },
   ]);
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const openChat = () => setOpen(true);
+
     window.addEventListener("open-ask-vice", openChat);
 
     return () => {
       window.removeEventListener("open-ask-vice", openChat);
     };
   }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   function sendMessage(value?: string) {
     const message = (value ?? input).trim();
@@ -35,10 +74,7 @@ export default function AskViceChat() {
     setMessages((prev) => [
       ...prev,
       { role: "user", text: message },
-      {
-        role: "vice",
-        text: "Good question. Soon I will use real GTA 6 data and give you a step-by-step plan. This is the first working chat prototype.",
-      },
+      { role: "vice", text: getViceReply(message) },
     ]);
 
     setInput("");
@@ -48,10 +84,10 @@ export default function AskViceChat() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {open && (
-        <div className="mb-4 w-[calc(100vw-3rem)] max-w-[380px] overflow-hidden rounded-3xl border border-white/10 bg-black/85 shadow-[0_0_50px_rgba(236,72,153,0.25)] backdrop-blur-xl">
+        <div className="mb-4 w-[calc(100vw-3rem)] max-w-[400px] overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/95 shadow-[0_0_45px_rgba(236,72,153,0.25)]">
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+              <p className="text-xs uppercase tracking-[0.35em] text-pink-400">
                 Vice AI
               </p>
               <h3 className="text-xl font-black text-white">Ask Vice</h3>
@@ -78,9 +114,10 @@ export default function AskViceChat() {
                 {message.text}
               </div>
             ))}
+            <div ref={bottomRef} />
           </div>
 
-          <div className="space-y-2 border-t border-white/10 p-4">
+          <div className="space-y-3 border-t border-white/10 p-4">
             <div className="flex flex-wrap gap-2">
               {quickPrompts.map((prompt) => (
                 <button
