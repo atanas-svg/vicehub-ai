@@ -1,84 +1,110 @@
+"use client";
+
+import { useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
 import ModuleAskButton from "../components/ModuleAskButton";
 import Navbar from "../components/Navbar";
 
+type WeaponCategory =
+  | "All"
+  | "Pistols"
+  | "SMGs"
+  | "Rifles"
+  | "Shotguns"
+  | "Explosives";
+
+const filters: WeaponCategory[] = [
+  "All",
+  "Pistols",
+  "SMGs",
+  "Rifles",
+  "Shotguns",
+  "Explosives",
+];
+
 const weapons = [
   {
-    name: "Street Compact",
-    type: "Pistol",
-    price: "$2,500",
-    damage: 45,
-    accuracy: 78,
-    range: 52,
-    fireRate: 70,
-    score: 7.6,
-    bestFor: "Early missions and backup weapon",
+    name: "Vice Pistol",
+    category: "Pistols",
+    type: "Sidearm",
+    icon: "🔫",
+    damage: 58,
+    accuracy: 82,
+    speed: 88,
+    score: 8.4,
+    bestFor: "Backup weapon",
+    desc: "A clean starter sidearm for early missions, backup shots and low-risk fights.",
   },
   {
-    name: "Vice SMG",
-    type: "SMG",
-    price: "$12,000",
-    damage: 58,
-    accuracy: 70,
-    range: 60,
-    fireRate: 92,
-    score: 8.7,
-    bestFor: "Close-range fights and fast movement",
+    name: "Neon SMG",
+    category: "SMGs",
+    type: "Close Range",
+    icon: "⚡",
+    damage: 66,
+    accuracy: 72,
+    speed: 94,
+    score: 8.8,
+    bestFor: "Close fights",
+    desc: "Fast fire rate and strong mobility for alleys, vehicles and quick combat.",
   },
   {
     name: "Coastal Rifle",
-    type: "Assault Rifle",
-    price: "$28,000",
-    damage: 76,
-    accuracy: 82,
-    range: 80,
-    fireRate: 75,
-    score: 9.1,
-    bestFor: "All-around missions and police fights",
+    category: "Rifles",
+    type: "All-round Rifle",
+    icon: "🎯",
+    damage: 82,
+    accuracy: 86,
+    speed: 72,
+    score: 9.2,
+    bestFor: "Main missions",
+    desc: "The best demo all-round weapon for missions, range and reliable damage.",
   },
   {
-    name: "Marina Shotgun",
-    type: "Shotgun",
-    price: "$18,500",
-    damage: 94,
-    accuracy: 55,
-    range: 35,
-    fireRate: 42,
-    score: 8.2,
-    bestFor: "Close combat and building fights",
+    name: "Harbor Shotgun",
+    category: "Shotguns",
+    type: "Heavy Close Range",
+    icon: "💥",
+    damage: 91,
+    accuracy: 54,
+    speed: 61,
+    score: 8.3,
+    bestFor: "Room clearing",
+    desc: "High damage at close range, perfect for tight interiors and aggressive fights.",
   },
   {
-    name: "Longview Sniper",
-    type: "Sniper Rifle",
-    price: "$45,000",
-    damage: 95,
-    accuracy: 92,
-    range: 98,
-    fireRate: 25,
-    score: 8.9,
-    bestFor: "Long-range missions and stealth",
+    name: "Road Flare Launcher",
+    category: "Explosives",
+    type: "Vehicle Counter",
+    icon: "🚀",
+    damage: 96,
+    accuracy: 63,
+    speed: 48,
+    score: 8.6,
+    bestFor: "Vehicles",
+    desc: "A late-game explosive option for stopping vehicles and heavy enemies.",
   },
   {
-    name: "Boomstick Launcher",
-    type: "Explosive",
-    price: "$75,000",
-    damage: 100,
-    accuracy: 50,
-    range: 75,
-    fireRate: 20,
-    score: 8.5,
-    bestFor: "Vehicles, chaos and heavy targets",
+    name: "Compact Rifle",
+    category: "Rifles",
+    type: "Light Rifle",
+    icon: "🟣",
+    damage: 74,
+    accuracy: 78,
+    speed: 84,
+    score: 8.7,
+    bestFor: "Balanced combat",
+    desc: "A lighter rifle concept with good speed, control and reliable mission use.",
   },
-];
+] as const;
 
 function StatBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <div className="mb-2 flex justify-between text-xs text-gray-400">
         <span>{label}</span>
-        <span>{value}/100</span>
+        <span>{value}</span>
       </div>
 
       <div className="h-2 overflow-hidden rounded-full bg-white/10">
@@ -92,6 +118,13 @@ function StatBar({ label, value }: { label: string; value: number }) {
 }
 
 export default function WeaponsPage() {
+  const [activeFilter, setActiveFilter] = useState<WeaponCategory>("All");
+
+  const visibleWeapons =
+    activeFilter === "All"
+      ? weapons
+      : weapons.filter((weapon) => weapon.category === activeFilter);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
       <BackgroundGlow />
@@ -104,28 +137,50 @@ export default function WeaponsPage() {
           </p>
 
           <h1 className="text-5xl font-black md:text-7xl">
-            Build the best loadout.
+            Build your perfect loadout.
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Compare weapons by damage, accuracy, range, fire rate and Vice
-            Score. This is a demo database until real GTA 6 data becomes
-            available.
+            A demo weapons database for comparing damage, accuracy, speed and
+            Vice Score. Real GTA 6 weapon stats will be added when reliable data
+            becomes available.
           </p>
 
-          <ModuleAskButton prompt="Help me build the best GTA 6 weapon loadout." />
+          <ModuleAskButton prompt="Build me a starter weapon loadout for GTA 6." />
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {weapons.map((weapon) => (
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          {filters.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={
+                activeFilter === filter
+                  ? "rounded-full bg-pink-600 px-5 py-2 text-sm font-bold text-white shadow-[0_0_25px_rgba(236,72,153,0.35)]"
+                  : "rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+              }
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {visibleWeapons.map((weapon) => (
             <div
               key={weapon.name}
               className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
             >
               <div className="mb-5 flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm text-cyan-300">{weapon.type}</p>
-                  <h2 className="mt-1 text-2xl font-black">{weapon.name}</h2>
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-pink-500/30 bg-pink-500/10 text-3xl">
+                    {weapon.icon}
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-cyan-300">{weapon.type}</p>
+                    <h2 className="text-2xl font-black">{weapon.name}</h2>
+                  </div>
                 </div>
 
                 <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
@@ -136,20 +191,17 @@ export default function WeaponsPage() {
                 </div>
               </div>
 
-              <p className="mb-5 text-sm text-gray-400">
-                Best for: {weapon.bestFor}
-              </p>
+              <p className="mb-5 text-sm text-gray-400">{weapon.desc}</p>
 
-              <div className="mb-5 rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
-                <p className="text-sm text-gray-400">Estimated price</p>
-                <p className="text-xl font-bold text-white">{weapon.price}</p>
+              <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+                <p className="text-xs text-cyan-300">Best for</p>
+                <p className="mt-1 font-bold text-white">{weapon.bestFor}</p>
               </div>
 
               <div className="space-y-4">
                 <StatBar label="Damage" value={weapon.damage} />
                 <StatBar label="Accuracy" value={weapon.accuracy} />
-                <StatBar label="Range" value={weapon.range} />
-                <StatBar label="Fire Rate" value={weapon.fireRate} />
+                <StatBar label="Speed" value={weapon.speed} />
               </div>
             </div>
           ))}
