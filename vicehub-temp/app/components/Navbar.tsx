@@ -12,6 +12,7 @@ const navItems = [
   { label: "Money", href: "/money" },
   { label: "Tracker", href: "/tracker" },
   { label: "Saved", href: "/saved" },
+  { label: "Roadmap", href: "/roadmap" },
 ] as const;
 
 const savedStorageKeys = [
@@ -79,7 +80,7 @@ export default function Navbar() {
           VICEHUB AI
         </Link>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {navItems.map((item) => {
             const active = pathname === item.href;
             const isSaved = item.href === "/saved";
@@ -90,8 +91,8 @@ export default function Navbar() {
                 href={item.href}
                 className={
                   active
-                    ? "rounded-full border border-pink-500/40 bg-pink-500/10 px-4 py-2 text-sm font-bold text-pink-300 shadow-[0_0_25px_rgba(236,72,153,0.18)]"
-                    : "rounded-full px-4 py-2 text-sm font-bold text-gray-300 transition hover:bg-white/5 hover:text-white"
+                    ? "rounded-full border border-pink-500/40 bg-pink-500/10 px-3 py-2 text-sm font-bold text-pink-300 shadow-[0_0_25px_rgba(236,72,153,0.18)]"
+                    : "rounded-full px-3 py-2 text-sm font-bold text-gray-300 transition hover:bg-white/5 hover:text-white"
                 }
               >
                 <span className="inline-flex items-center gap-2">

@@ -8,6 +8,7 @@ const moduleLinks = [
   { label: "Money Guide", href: "/money" },
   { label: "100% Tracker", href: "/tracker" },
   { label: "Saved Hub", href: "/saved" },
+  { label: "Roadmap", href: "/roadmap" },
 ];
 
 export default function Footer() {
@@ -24,7 +25,8 @@ export default function Footer() {
 
           <p className="mt-4 max-w-md text-sm leading-7 text-gray-400">
             An independent GTA 6 companion hub with AI help, map tools,
-            vehicles, weapons, money guides, saved items and 100% tracking.
+            vehicles, weapons, money guides, saved items, roadmap and 100%
+            tracking.
           </p>
 
           <div className="mt-5 inline-flex rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-pink-300">
