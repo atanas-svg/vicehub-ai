@@ -46,7 +46,22 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    setSavedCount(getSavedCount());
+    function updateSavedCount() {
+      setSavedCount(getSavedCount());
+    }
+
+    updateSavedCount();
+
+    const interval = setInterval(updateSavedCount, 1000);
+
+    window.addEventListener("storage", updateSavedCount);
+    window.addEventListener("focus", updateSavedCount);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("storage", updateSavedCount);
+      window.removeEventListener("focus", updateSavedCount);
+    };
   }, [pathname]);
 
   return (
