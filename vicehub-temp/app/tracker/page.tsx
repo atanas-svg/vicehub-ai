@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
@@ -24,8 +24,19 @@ type Task = {
   done: boolean;
 };
 
+const STORAGE_KEY = "vicehub-tracker-progress";
+
 const filters: Filter[] = [
   "All",
+  "Story",
+  "Collectibles",
+  "Vehicles",
+  "Weapons",
+  "Activities",
+  "Achievements",
+];
+
+const categories: Category[] = [
   "Story",
   "Collectibles",
   "Vehicles",
@@ -91,11 +102,31 @@ function ProgressBar({ completed, total }: { completed: number; total: number })
 export default function TrackerPage() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const savedProgress = localStorage.getItem(STORAGE_KEY);
+
+    if (savedProgress) {
+      try {
+        const parsedTasks = JSON.parse(savedProgress) as Task[];
+        setTasks(parsedTasks);
+      } catch {
+        setTasks(initialTasks);
+      }
+    }
+
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks, loaded]);
 
   const visibleCategories =
-    activeFilter === "All"
-      ? filters.filter((filter) => filter !== "All") as Category[]
-      : [activeFilter];
+    activeFilter === "All" ? categories : [activeFilter];
 
   const totalCompleted = tasks.filter((task) => task.done).length;
   const totalItems = tasks.length;
@@ -112,6 +143,7 @@ export default function TrackerPage() {
   function resetDemo() {
     setTasks(initialTasks);
     setActiveFilter("All");
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   return (
@@ -130,14 +162,18 @@ export default function TrackerPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Click tasks to update your demo completion progress for story,
-            collectibles, vehicles, weapons, activities and achievements.
+            Click tasks to update your demo completion progress. Your progress
+            is saved automatically in this browser.
           </p>
 
           <ModuleAskButton prompt="Help me reach 100% completion in GTA 6." />
         </div>
 
         <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-pink-500/30 bg-pink-500/10 p-6 text-center">
+          <div className="mb-4 inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">
+            Auto-saved locally
+          </div>
+
           <p className="text-sm uppercase tracking-[0.35em] text-pink-300">
             Overall Completion
           </p>
