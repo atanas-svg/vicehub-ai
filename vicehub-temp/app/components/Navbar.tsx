@@ -11,6 +11,7 @@ const navItems = [
   { label: "Weapons", href: "/weapons" },
   { label: "Money", href: "/money" },
   { label: "Tracker", href: "/tracker" },
+  { label: "Saved", href: "/saved" },
 ] as const;
 
 export default function Navbar() {
@@ -32,7 +33,7 @@ export default function Navbar() {
           VICEHUB AI
         </Link>
 
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           {navItems.map((item) => {
             const active = pathname === item.href;
 
