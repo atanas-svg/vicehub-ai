@@ -20,14 +20,14 @@ const features = [
     href: "/vehicles",
     icon: "🚗",
     status: "Beta",
-    desc: "Compare demo vehicles by speed, handling, value and Vice Score.",
+    desc: "Search, filter, sort and save demo vehicles by speed, handling, value and Vice Score.",
   },
   {
     title: "Weapons",
     href: "/weapons",
     icon: "🔫",
     status: "Beta",
-    desc: "Plan starter loadouts and compare weapons for missions, fights and survival.",
+    desc: "Search, filter, sort and save weapons for missions, fights and survival.",
   },
   {
     title: "Money Guide",
@@ -42,6 +42,13 @@ const features = [
     icon: "✅",
     status: "Beta",
     desc: "Track story missions, collectibles, vehicles, weapons, achievements and side activities.",
+  },
+  {
+    title: "Saved Hub",
+    href: "/saved",
+    icon: "⭐",
+    status: "New",
+    desc: "View your saved map pins, vehicles, weapons and money strategies in one place.",
   },
 ];
 
@@ -58,8 +65,8 @@ export default function FeatureGrid() {
         </h2>
 
         <p className="mx-auto mt-5 max-w-2xl text-gray-400">
-          Start with AI, then jump into map routes, vehicle picks, weapon
-          loadouts, money plans and full completion tracking.
+          Start with AI, then jump into map routes, saved items, vehicle picks,
+          weapon loadouts, money plans and full completion tracking.
         </p>
       </div>
 
@@ -78,6 +85,8 @@ export default function FeatureGrid() {
               <span
                 className={
                   feature.status === "Live"
+                    ? "rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-300"
+                    : feature.status === "New"
                     ? "rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-300"
                     : "rounded-full border border-pink-500/30 bg-pink-500/10 px-3 py-1 text-xs font-bold text-pink-300"
                 }
