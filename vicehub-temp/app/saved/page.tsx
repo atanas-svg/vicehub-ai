@@ -32,11 +32,15 @@ export default function SavedPage() {
   const [savedWeapons, setSavedWeapons] = useState<string[]>([]);
   const [savedMoney, setSavedMoney] = useState<string[]>([]);
 
-  useEffect(() => {
+  function loadSavedItems() {
     setSavedPins(readSavedItems(storageKeys.pins));
     setSavedVehicles(readSavedItems(storageKeys.vehicles));
     setSavedWeapons(readSavedItems(storageKeys.weapons));
     setSavedMoney(readSavedItems(storageKeys.money));
+  }
+
+  useEffect(() => {
+    loadSavedItems();
   }, []);
 
   const totalSaved =
@@ -48,6 +52,18 @@ export default function SavedPage() {
   function clearSection(key: string, setter: (items: string[]) => void) {
     localStorage.removeItem(key);
     setter([]);
+  }
+
+  function clearAllSaved() {
+    localStorage.removeItem(storageKeys.pins);
+    localStorage.removeItem(storageKeys.vehicles);
+    localStorage.removeItem(storageKeys.weapons);
+    localStorage.removeItem(storageKeys.money);
+
+    setSavedPins([]);
+    setSavedVehicles([]);
+    setSavedWeapons([]);
+    setSavedMoney([]);
   }
 
   const sections = [
@@ -104,6 +120,15 @@ export default function SavedPage() {
             All saved map pins, vehicles, weapons and money strategies in one
             place. Saved locally in your browser.
           </p>
+
+          {totalSaved > 0 && (
+            <button
+              onClick={clearAllSaved}
+              className="mt-8 rounded-2xl border border-pink-500/40 bg-pink-500/10 px-6 py-3 text-sm font-black text-pink-300 transition hover:bg-pink-500/20"
+            >
+              Clear All Saved
+            </button>
+          )}
         </div>
 
         <div className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-4 md:grid-cols-4">
@@ -137,6 +162,44 @@ export default function SavedPage() {
             </p>
           </div>
         </div>
+
+        {totalSaved === 0 && (
+          <div className="mx-auto mt-14 max-w-3xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
+            <p className="text-5xl">⭐</p>
+
+            <h2 className="mt-5 text-3xl font-black">
+              Nothing saved yet.
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-gray-400">
+              Go to Map, Vehicles, Weapons or Money Guide and save your favorite
+              items. They will appear here automatically.
+            </p>
+
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
+                href="/map"
+                className="rounded-2xl bg-pink-600 px-6 py-3 text-sm font-black text-white transition hover:bg-pink-500"
+              >
+                Open Map
+              </Link>
+
+              <Link
+                href="/vehicles"
+                className="rounded-2xl border border-white/10 bg-black/30 px-6 py-3 text-sm font-black text-gray-300 transition hover:border-cyan-400/50 hover:text-white"
+              >
+                Open Vehicles
+              </Link>
+
+              <Link
+                href="/weapons"
+                className="rounded-2xl border border-white/10 bg-black/30 px-6 py-3 text-sm font-black text-gray-300 transition hover:border-cyan-400/50 hover:text-white"
+              >
+                Open Weapons
+              </Link>
+            </div>
+          </div>
+        )}
 
         <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2">
           {sections.map((section) => (
