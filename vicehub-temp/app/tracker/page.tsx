@@ -1,61 +1,86 @@
+"use client";
+
+import { useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
 import ModuleAskButton from "../components/ModuleAskButton";
 import Navbar from "../components/Navbar";
 
-const trackerSections = [
-  {
-    title: "Story Missions",
-    completed: 8,
-    total: 24,
-    items: ["Intro Mission", "First Contact", "Beach Job", "Safehouse Setup"],
-  },
-  {
-    title: "Collectibles",
-    completed: 12,
-    total: 80,
-    items: ["Hidden Packages", "Street Photos", "Rare Items", "Secret Notes"],
-  },
-  {
-    title: "Vehicles",
-    completed: 5,
-    total: 35,
-    items: ["Sports Cars", "Motorbikes", "Boats", "Special Vehicles"],
-  },
-  {
-    title: "Weapons",
-    completed: 6,
-    total: 18,
-    items: ["Pistols", "SMGs", "Rifles", "Explosives"],
-  },
-  {
-    title: "Achievements",
-    completed: 9,
-    total: 42,
-    items: ["Money Milestones", "Mission Challenges", "Stunts", "Completion"],
-  },
-  {
-    title: "Side Activities",
-    completed: 4,
-    total: 20,
-    items: ["Races", "Jobs", "Events", "Challenges"],
-  },
+type Category =
+  | "Story"
+  | "Collectibles"
+  | "Vehicles"
+  | "Weapons"
+  | "Activities"
+  | "Achievements";
+
+type Filter = "All" | Category;
+
+type Task = {
+  id: string;
+  category: Category;
+  title: string;
+  done: boolean;
+};
+
+const filters: Filter[] = [
+  "All",
+  "Story",
+  "Collectibles",
+  "Vehicles",
+  "Weapons",
+  "Activities",
+  "Achievements",
+];
+
+const initialTasks: Task[] = [
+  { id: "story-1", category: "Story", title: "Complete opening mission", done: true },
+  { id: "story-2", category: "Story", title: "Unlock first safehouse", done: true },
+  { id: "story-3", category: "Story", title: "Complete first major job", done: false },
+  { id: "story-4", category: "Story", title: "Finish chapter one", done: false },
+
+  { id: "collect-1", category: "Collectibles", title: "Find first hidden package", done: true },
+  { id: "collect-2", category: "Collectibles", title: "Collect beach secrets", done: false },
+  { id: "collect-3", category: "Collectibles", title: "Track rare city items", done: false },
+  { id: "collect-4", category: "Collectibles", title: "Clear collectible zone", done: false },
+
+  { id: "vehicle-1", category: "Vehicles", title: "Save first fast car", done: true },
+  { id: "vehicle-2", category: "Vehicles", title: "Find a reliable bike", done: true },
+  { id: "vehicle-3", category: "Vehicles", title: "Unlock boat route", done: false },
+  { id: "vehicle-4", category: "Vehicles", title: "Collect special vehicle", done: false },
+
+  { id: "weapon-1", category: "Weapons", title: "Buy starter pistol", done: true },
+  { id: "weapon-2", category: "Weapons", title: "Unlock SMG", done: true },
+  { id: "weapon-3", category: "Weapons", title: "Upgrade main rifle", done: false },
+  { id: "weapon-4", category: "Weapons", title: "Unlock explosive weapon", done: false },
+
+  { id: "activity-1", category: "Activities", title: "Complete first race", done: false },
+  { id: "activity-2", category: "Activities", title: "Finish first side job", done: true },
+  { id: "activity-3", category: "Activities", title: "Win street challenge", done: false },
+  { id: "activity-4", category: "Activities", title: "Complete city event", done: false },
+
+  { id: "achievement-1", category: "Achievements", title: "Reach first money milestone", done: true },
+  { id: "achievement-2", category: "Achievements", title: "Complete weapon challenge", done: false },
+  { id: "achievement-3", category: "Achievements", title: "Finish vehicle challenge", done: false },
+  { id: "achievement-4", category: "Achievements", title: "Reach 100% completion", done: false },
 ];
 
 function ProgressBar({ completed, total }: { completed: number; total: number }) {
-  const percent = Math.round((completed / total) * 100);
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   return (
     <div>
       <div className="mb-2 flex justify-between text-xs text-gray-400">
-        <span>{completed}/{total} completed</span>
+        <span>
+          {completed}/{total} completed
+        </span>
         <span>{percent}%</span>
       </div>
 
       <div className="h-2 overflow-hidden rounded-full bg-white/10">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-pink-500 to-cyan-400"
+          className="h-full rounded-full bg-gradient-to-r from-pink-500 to-cyan-400 transition-all"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -64,17 +89,30 @@ function ProgressBar({ completed, total }: { completed: number; total: number })
 }
 
 export default function TrackerPage() {
-  const totalCompleted = trackerSections.reduce(
-    (sum, section) => sum + section.completed,
-    0
-  );
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [activeFilter, setActiveFilter] = useState<Filter>("All");
 
-  const totalItems = trackerSections.reduce(
-    (sum, section) => sum + section.total,
-    0
-  );
+  const visibleCategories =
+    activeFilter === "All"
+      ? filters.filter((filter) => filter !== "All") as Category[]
+      : [activeFilter];
 
+  const totalCompleted = tasks.filter((task) => task.done).length;
+  const totalItems = tasks.length;
   const overallPercent = Math.round((totalCompleted / totalItems) * 100);
+
+  function toggleTask(id: string) {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === id ? { ...task, done: !task.done } : task
+      )
+    );
+  }
+
+  function resetDemo() {
+    setTasks(initialTasks);
+    setActiveFilter("All");
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -92,11 +130,11 @@ export default function TrackerPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            A demo completion tracker for missions, collectibles, vehicles,
-            weapons, achievements and side activities.
+            Click tasks to update your demo completion progress for story,
+            collectibles, vehicles, weapons, activities and achievements.
           </p>
 
-          <ModuleAskButton prompt="Help me understand how to reach 100% completion in GTA 6." />
+          <ModuleAskButton prompt="Help me reach 100% completion in GTA 6." />
         </div>
 
         <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-pink-500/30 bg-pink-500/10 p-6 text-center">
@@ -112,45 +150,81 @@ export default function TrackerPage() {
 
           <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/10">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-pink-500 to-cyan-400"
+              className="h-full rounded-full bg-gradient-to-r from-pink-500 to-cyan-400 transition-all"
               style={{ width: `${overallPercent}%` }}
             />
           </div>
+
+          <button
+            onClick={resetDemo}
+            className="mt-6 rounded-full border border-white/10 bg-black/30 px-5 py-2 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+          >
+            Reset demo progress
+          </button>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {trackerSections.map((section) => (
-            <div
-              key={section.title}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          {filters.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={
+                activeFilter === filter
+                  ? "rounded-full bg-pink-600 px-5 py-2 text-sm font-bold text-white shadow-[0_0_25px_rgba(236,72,153,0.35)]"
+                  : "rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+              }
             >
-              <h2 className="text-2xl font-black">{section.title}</h2>
+              {filter}
+            </button>
+          ))}
+        </div>
 
-              <div className="mt-5">
-                <ProgressBar completed={section.completed} total={section.total} />
-              </div>
+        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {visibleCategories.map((category) => {
+            const sectionTasks = tasks.filter((task) => task.category === category);
+            const completed = sectionTasks.filter((task) => task.done).length;
 
-              <div className="mt-6 space-y-3">
-                {section.items.map((item, index) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-300"
-                  >
-                    <span
+            return (
+              <div
+                key={category}
+                className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+              >
+                <h2 className="text-2xl font-black">{category}</h2>
+
+                <div className="mt-5">
+                  <ProgressBar completed={completed} total={sectionTasks.length} />
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  {sectionTasks.map((task) => (
+                    <button
+                      key={task.id}
+                      onClick={() => toggleTask(task.id)}
                       className={
-                        index < 2
-                          ? "text-cyan-300"
-                          : "text-gray-600"
+                        task.done
+                          ? "flex w-full items-center gap-3 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-left text-sm text-white"
+                          : "flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm text-gray-300 transition hover:border-pink-500/40 hover:text-white"
                       }
                     >
-                      {index < 2 ? "✓" : "○"}
-                    </span>
-                    {item}
-                  </div>
-                ))}
+                      <span
+                        className={
+                          task.done
+                            ? "flex h-6 w-6 items-center justify-center rounded-full bg-cyan-400 text-xs font-black text-black"
+                            : "flex h-6 w-6 items-center justify-center rounded-full border border-white/20 text-xs text-gray-500"
+                        }
+                      >
+                        {task.done ? "✓" : ""}
+                      </span>
+
+                      <span className={task.done ? "line-through opacity-80" : ""}>
+                        {task.title}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
