@@ -12,6 +12,7 @@ export default function TrackerPage() {
         "Achievement tracking",
         "Completion percentage",
       ]}
+      askPrompt="Help me understand how to reach 100% completion in GTA 6."
     />
   );
 }

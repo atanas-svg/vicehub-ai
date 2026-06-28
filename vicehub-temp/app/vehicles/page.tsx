@@ -12,6 +12,7 @@ export default function VehiclesPage() {
         "Unlock requirements",
         "Vice Score rating",
       ]}
+      askPrompt="Help me choose the best first vehicle in GTA 6."
     />
   );
 }

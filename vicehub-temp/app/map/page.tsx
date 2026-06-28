@@ -12,6 +12,7 @@ export default function MapPage() {
         "Collectibles",
         "Vehicle spawn points",
       ]}
+      askPrompt="Tell me how the ViceHub interactive map will help me in GTA 6."
     />
   );
 }

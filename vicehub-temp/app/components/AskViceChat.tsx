@@ -54,13 +54,32 @@ export default function AskViceChat() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const openChat = () => setOpen(true);
-    window.addEventListener("open-ask-vice", openChat);
+  const openChat = (event: Event) => {
+    setOpen(true);
 
-    return () => {
-      window.removeEventListener("open-ask-vice", openChat);
-    };
-  }, []);
+    const customEvent = event as CustomEvent<{ prompt?: string }>;
+    const prompt = customEvent.detail?.prompt;
+
+    if (!prompt) return;
+
+    setMessages((prev) => [...prev, { role: "user", text: prompt }]);
+    setThinking(true);
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { role: "vice", text: getViceReply(prompt) },
+      ]);
+      setThinking(false);
+    }, 800);
+  };
+
+  window.addEventListener("open-ask-vice", openChat);
+
+  return () => {
+    window.removeEventListener("open-ask-vice", openChat);
+  };
+}, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

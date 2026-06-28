@@ -12,6 +12,7 @@ export default function MoneyPage() {
         "Income planning",
         "Smart spending tips",
       ]}
+      askPrompt="Help me make money fast in GTA 6."
     />
   );
 }

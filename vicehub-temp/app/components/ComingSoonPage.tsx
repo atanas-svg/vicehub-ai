@@ -1,5 +1,7 @@
-import Footer from "./Footer";
+import AskViceChat from "./AskViceChat";
 import BackgroundGlow from "./BackgroundGlow";
+import Footer from "./Footer";
+import ModuleAskButton from "./ModuleAskButton";
 import Navbar from "./Navbar";
 
 type ComingSoonPageProps = {
@@ -7,6 +9,7 @@ type ComingSoonPageProps = {
   title: string;
   description: string;
   features: string[];
+  askPrompt: string;
 };
 
 export default function ComingSoonPage({
@@ -14,6 +17,7 @@ export default function ComingSoonPage({
   title,
   description,
   features,
+  askPrompt,
 }: ComingSoonPageProps) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -41,8 +45,12 @@ export default function ComingSoonPage({
             </div>
           ))}
         </div>
+
+        <ModuleAskButton prompt={askPrompt} />
       </section>
-     <Footer />
+
+      <AskViceChat />
+      <Footer />
     </main>
   );
 }

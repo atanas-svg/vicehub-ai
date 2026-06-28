@@ -12,6 +12,7 @@ export default function WeaponsPage() {
         "Unlock info",
         "Weapon stats",
       ]}
+      askPrompt="Help me build the best GTA 6 weapon loadout."
     />
   );
 }
