@@ -1,8 +1,23 @@
+"use client";
+
+import { useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
 import ModuleAskButton from "../components/ModuleAskButton";
 import Navbar from "../components/Navbar";
+
+type PinType = "Mission" | "Collectible" | "Vehicle" | "Weapon" | "Safehouse";
+type FilterType = "All" | PinType;
+
+const filters: FilterType[] = [
+  "All",
+  "Mission",
+  "Collectible",
+  "Vehicle",
+  "Weapon",
+  "Safehouse",
+];
 
 const mapPins = [
   {
@@ -12,6 +27,8 @@ const mapPins = [
     icon: "🎯",
     status: "Priority",
     desc: "A key story mission area. Use this zone to start progressing fast.",
+    left: "18%",
+    top: "25%",
   },
   {
     title: "Hidden Package",
@@ -20,6 +37,8 @@ const mapPins = [
     icon: "📦",
     status: "Secret",
     desc: "A collectible location preview for future GTA 6 hidden items.",
+    left: "62%",
+    top: "18%",
   },
   {
     title: "Rare Vehicle Spawn",
@@ -28,6 +47,8 @@ const mapPins = [
     icon: "🚗",
     status: "Useful",
     desc: "Possible vehicle spawn zone for rare or high-value rides.",
+    left: "45%",
+    top: "52%",
   },
   {
     title: "Weapon Pickup",
@@ -36,6 +57,8 @@ const mapPins = [
     icon: "🔫",
     status: "Combat",
     desc: "Useful weapon pickup location for early missions and fights.",
+    left: "72%",
+    top: "66%",
   },
   {
     title: "Safehouse",
@@ -44,10 +67,19 @@ const mapPins = [
     icon: "🏠",
     status: "Save Point",
     desc: "A future safehouse marker for planning routes and progress.",
+    left: "25%",
+    top: "72%",
   },
-];
+] as const;
 
 export default function MapPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>("All");
+
+  const visiblePins =
+    activeFilter === "All"
+      ? mapPins
+      : mapPins.filter((pin) => pin.type === activeFilter);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
       <BackgroundGlow />
@@ -71,7 +103,23 @@ export default function MapPage() {
           <ModuleAskButton prompt="Tell me how the ViceHub interactive map will help me in GTA 6." />
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          {filters.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={
+                activeFilter === filter
+                  ? "rounded-full bg-pink-600 px-5 py-2 text-sm font-bold text-white shadow-[0_0_25px_rgba(236,72,153,0.35)]"
+                  : "rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+              }
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="relative min-h-[520px] overflow-hidden rounded-3xl border border-white/10 bg-[#050507] p-6">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(236,72,153,0.20),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(34,211,238,0.16),transparent_35%)]" />
 
@@ -136,10 +184,6 @@ export default function MapPage() {
                 strokeWidth="5"
                 strokeLinecap="round"
               />
-
-              <circle cx="185" cy="230" r="52" fill="rgba(255,255,255,0.035)" />
-              <circle cx="625" cy="220" r="68" fill="rgba(255,255,255,0.035)" />
-              <circle cx="530" cy="470" r="55" fill="rgba(255,255,255,0.035)" />
             </svg>
 
             <div className="relative z-10 flex h-full min-h-[470px] flex-col justify-between">
@@ -154,30 +198,20 @@ export default function MapPage() {
                 </div>
 
                 <span className="rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-2 text-sm text-pink-300">
-                  Demo
+                  {activeFilter}
                 </span>
               </div>
 
               <div className="relative flex-1">
-                <div className="absolute left-[18%] top-[25%]">
-                  <MapPin icon="🎯" label="Mission" />
-                </div>
-
-                <div className="absolute left-[62%] top-[18%]">
-                  <MapPin icon="📦" label="Secret" />
-                </div>
-
-                <div className="absolute left-[45%] top-[52%]">
-                  <MapPin icon="🚗" label="Vehicle" />
-                </div>
-
-                <div className="absolute left-[72%] top-[66%]">
-                  <MapPin icon="🔫" label="Weapon" />
-                </div>
-
-                <div className="absolute left-[25%] top-[72%]">
-                  <MapPin icon="🏠" label="Safehouse" />
-                </div>
+                {visiblePins.map((pin) => (
+                  <div
+                    key={pin.title}
+                    className="absolute"
+                    style={{ left: pin.left, top: pin.top }}
+                  >
+                    <MapPin icon={pin.icon} label={pin.type} />
+                  </div>
+                ))}
               </div>
 
               <p className="text-sm text-gray-400">
@@ -189,7 +223,7 @@ export default function MapPage() {
           </div>
 
           <div className="space-y-4">
-            {mapPins.map((pin) => (
+            {visiblePins.map((pin) => (
               <div
                 key={pin.title}
                 className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
