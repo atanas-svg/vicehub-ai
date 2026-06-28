@@ -15,6 +15,8 @@ type WeaponCategory =
   | "Shotguns"
   | "Explosives";
 
+type SortOption = "Vice Score" | "Damage" | "Accuracy" | "Speed";
+
 const filters: WeaponCategory[] = [
   "All",
   "Pistols",
@@ -23,6 +25,8 @@ const filters: WeaponCategory[] = [
   "Shotguns",
   "Explosives",
 ];
+
+const sortOptions: SortOption[] = ["Vice Score", "Damage", "Accuracy", "Speed"];
 
 const weapons = [
   {
@@ -119,19 +123,28 @@ function StatBar({ label, value }: { label: string; value: number }) {
 
 export default function WeaponsPage() {
   const [activeFilter, setActiveFilter] = useState<WeaponCategory>("All");
+  const [activeSort, setActiveSort] = useState<SortOption>("Vice Score");
   const [search, setSearch] = useState("");
 
-  const visibleWeapons = weapons.filter((weapon) => {
-    const matchesFilter =
-      activeFilter === "All" || weapon.category === activeFilter;
+  const visibleWeapons = weapons
+    .filter((weapon) => {
+      const matchesFilter =
+        activeFilter === "All" || weapon.category === activeFilter;
 
-    const searchText =
-      `${weapon.name} ${weapon.category} ${weapon.type} ${weapon.bestFor} ${weapon.desc}`.toLowerCase();
+      const searchText =
+        `${weapon.name} ${weapon.category} ${weapon.type} ${weapon.bestFor} ${weapon.desc}`.toLowerCase();
 
-    const matchesSearch = searchText.includes(search.toLowerCase());
+      const matchesSearch = searchText.includes(search.toLowerCase());
 
-    return matchesFilter && matchesSearch;
-  });
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (activeSort === "Damage") return b.damage - a.damage;
+      if (activeSort === "Accuracy") return b.accuracy - a.accuracy;
+      if (activeSort === "Speed") return b.speed - a.speed;
+
+      return b.score - a.score;
+    });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -149,7 +162,7 @@ export default function WeaponsPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Search and filter demo weapons by damage, accuracy, speed, type and
+            Search, filter and sort demo weapons by damage, accuracy, speed and
             Vice Score.
           </p>
 
@@ -192,8 +205,24 @@ export default function WeaponsPage() {
           ))}
         </div>
 
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          {sortOptions.map((sort) => (
+            <button
+              key={sort}
+              onClick={() => setActiveSort(sort)}
+              className={
+                activeSort === sort
+                  ? "rounded-full border border-cyan-400/40 bg-cyan-400/10 px-5 py-2 text-sm font-bold text-cyan-300"
+                  : "rounded-full border border-white/10 bg-black/30 px-5 py-2 text-sm font-bold text-gray-400 transition hover:border-cyan-400/50 hover:text-white"
+              }
+            >
+              Sort: {sort}
+            </button>
+          ))}
+        </div>
+
         <p className="mt-6 text-center text-sm text-gray-500">
-          Showing {visibleWeapons.length} weapons
+          Showing {visibleWeapons.length} weapons · Sorted by {activeSort}
         </p>
 
         {visibleWeapons.length > 0 ? (
