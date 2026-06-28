@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
@@ -17,6 +17,8 @@ type MoneyFilter =
 
 type MoneyTag = Exclude<MoneyFilter, "All">;
 type SortOption = "Vice Score" | "Profit" | "Lowest Risk" | "Fastest";
+
+const STORAGE_KEY = "vicehub-saved-money-strategies";
 
 const filters: MoneyFilter[] = [
   "All",
@@ -144,6 +146,36 @@ export default function MoneyPage() {
   const [activeFilter, setActiveFilter] = useState<MoneyFilter>("All");
   const [activeSort, setActiveSort] = useState<SortOption>("Vice Score");
   const [search, setSearch] = useState("");
+  const [savedStrategies, setSavedStrategies] = useState<string[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      try {
+        setSavedStrategies(JSON.parse(saved) as string[]);
+      } catch {
+        setSavedStrategies([]);
+      }
+    }
+
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedStrategies));
+  }, [savedStrategies, loaded]);
+
+  function toggleSavedStrategy(strategyTitle: string) {
+    setSavedStrategies((current) =>
+      current.includes(strategyTitle)
+        ? current.filter((title) => title !== strategyTitle)
+        : [...current, strategyTitle]
+    );
+  }
 
   const visibleMethods = moneyMethods
     .filter((method) => {
@@ -189,14 +221,30 @@ export default function MoneyPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Search, filter and sort demo money strategies by risk, profit,
+            Search, filter, sort and save demo money strategies by risk, profit,
             speed and Vice Score.
           </p>
 
           <ModuleAskButton prompt="Make me a smart GTA 6 money plan." />
         </div>
 
-        <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-cyan-400/20 bg-cyan-400/5 p-6 text-center">
+        <div className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-4">
+          <div className="rounded-3xl border border-pink-500/30 bg-pink-500/10 p-5 text-center">
+            <p className="text-3xl font-black">{savedStrategies.length}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-pink-300">
+              Saved Strategies
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-cyan-400/30 bg-cyan-400/10 p-5 text-center">
+            <p className="text-3xl font-black">{visibleMethods.length}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-cyan-300">
+              Showing
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-cyan-400/20 bg-cyan-400/5 p-6 text-center">
           <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">
             Smart Money Rule
           </p>
@@ -271,50 +319,75 @@ export default function MoneyPage() {
 
         {visibleMethods.length > 0 ? (
           <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {visibleMethods.map((method) => (
-              <div
-                key={method.title}
-                className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
-              >
-                <div className="mb-5 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-cyan-300">{method.difficulty}</p>
-                    <h2 className="mt-1 text-2xl font-black">{method.title}</h2>
+            {visibleMethods.map((method) => {
+              const saved = savedStrategies.includes(method.title);
+
+              return (
+                <div
+                  key={method.title}
+                  className={
+                    saved
+                      ? "rounded-3xl border border-cyan-400/40 bg-cyan-400/[0.06] p-6 transition hover:-translate-y-1 hover:border-cyan-400/70"
+                      : "rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+                  }
+                >
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-cyan-300">
+                        {method.difficulty}
+                      </p>
+                      <h2 className="mt-1 text-2xl font-black">
+                        {method.title}
+                      </h2>
+                    </div>
+
+                    <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
+                      <p className="text-xs text-pink-300">Vice Score</p>
+                      <p className="text-xl font-black text-white">
+                        {method.score}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
-                    <p className="text-xs text-pink-300">Vice Score</p>
-                    <p className="text-xl font-black text-white">
-                      {method.score}
+                  <p className="mb-5 text-sm text-gray-400">{method.desc}</p>
+
+                  <div className="mb-5 flex flex-wrap gap-2">
+                    {method.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-gray-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+                    <p className="text-xs text-cyan-300">Best for</p>
+                    <p className="mt-1 font-bold text-white">
+                      {method.bestFor}
                     </p>
                   </div>
-                </div>
 
-                <p className="mb-5 text-sm text-gray-400">{method.desc}</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <Badge label="Profit" value={method.profit} />
+                    <Badge label="Risk" value={method.risk} />
+                    <Badge label="Time" value={method.time} />
+                  </div>
 
-                <div className="mb-5 flex flex-wrap gap-2">
-                  {method.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-gray-300"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  <button
+                    onClick={() => toggleSavedStrategy(method.title)}
+                    className={
+                      saved
+                        ? "mt-6 w-full rounded-2xl border border-cyan-400/40 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20"
+                        : "mt-6 w-full rounded-2xl border border-white/10 bg-black/30 px-5 py-3 text-sm font-black text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+                    }
+                  >
+                    {saved ? "Saved Strategy ✓" : "Save Strategy"}
+                  </button>
                 </div>
-
-                <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-                  <p className="text-xs text-cyan-300">Best for</p>
-                  <p className="mt-1 font-bold text-white">{method.bestFor}</p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  <Badge label="Profit" value={method.profit} />
-                  <Badge label="Risk" value={method.risk} />
-                  <Badge label="Time" value={method.time} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
