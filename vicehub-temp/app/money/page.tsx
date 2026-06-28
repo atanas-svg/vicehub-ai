@@ -8,48 +8,60 @@ const moneyMethods = [
   {
     title: "Story Missions First",
     difficulty: "Easy",
-    profit: "$",
+    profit: "Medium",
+    risk: "Low",
     time: "Fast",
+    bestFor: "Early game",
     score: 9.2,
     desc: "Best early path. Complete main missions before wasting cash on expensive items.",
   },
   {
     title: "Side Jobs Route",
     difficulty: "Medium",
-    profit: "$$",
+    profit: "Medium",
+    risk: "Medium",
     time: "Medium",
+    bestFor: "Steady income",
     score: 8.7,
     desc: "Use repeatable activities to build steady money while unlocking useful gear.",
   },
   {
     title: "Vehicle Flip Strategy",
     difficulty: "Medium",
-    profit: "$$",
+    profit: "High",
+    risk: "Medium",
     time: "Fast",
+    bestFor: "Players who like cars",
     score: 8.4,
-    desc: "Focus on vehicles with good resale/value potential once the economy is known.",
+    desc: "Focus on vehicles with good resale and value potential once the economy is known.",
   },
   {
     title: "Save Before Flexing",
     difficulty: "Easy",
-    profit: "$$$",
+    profit: "High",
+    risk: "Low",
     time: "Long-term",
+    bestFor: "Smart progression",
     score: 9.5,
     desc: "Avoid buying luxury cars too early. Buy income tools and useful upgrades first.",
   },
   {
     title: "High Risk Jobs",
     difficulty: "Hard",
-    profit: "$$$",
+    profit: "Very High",
+    risk: "High",
     time: "Medium",
+    bestFor: "Late game",
     score: 8.9,
     desc: "Later-game activities with bigger payouts, but higher weapon and vehicle requirements.",
   },
   {
     title: "Smart Upgrade Plan",
     difficulty: "Easy",
-    profit: "$$",
+    profit: "Medium",
+    risk: "Low",
     time: "Long-term",
+    bestFor: "Efficient players",
     score: 9.0,
     desc: "Upgrade only what improves missions: weapons, armor, fast transport and safe routes.",
   },
@@ -81,8 +93,8 @@ export default function MoneyPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            A demo money strategy board for GTA 6. Real methods will be updated
-            when official gameplay and economy data becomes available.
+            A demo money strategy board for GTA 6. Real payout numbers will be
+            updated when official gameplay and economy data becomes available.
           </p>
 
           <ModuleAskButton prompt="Help me make money fast in GTA 6." />
@@ -110,8 +122,14 @@ export default function MoneyPage() {
 
               <p className="mb-5 text-sm text-gray-400">{method.desc}</p>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+                <p className="text-xs text-cyan-300">Best for</p>
+                <p className="mt-1 font-bold text-white">{method.bestFor}</p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
                 <Badge label="Profit" value={method.profit} />
+                <Badge label="Risk" value={method.risk} />
                 <Badge label="Time" value={method.time} />
               </div>
             </div>
