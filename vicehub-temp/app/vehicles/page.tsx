@@ -1,5 +1,7 @@
+import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
+import ModuleAskButton from "../components/ModuleAskButton";
 import Navbar from "../components/Navbar";
 
 const vehicles = [
@@ -72,6 +74,7 @@ function StatBar({ label, value }: { label: string; value: number }) {
         <span>{label}</span>
         <span>{value}/100</span>
       </div>
+
       <div className="h-2 overflow-hidden rounded-full bg-white/10">
         <div
           className="h-full rounded-full bg-gradient-to-r from-pink-500 to-cyan-400"
@@ -102,6 +105,8 @@ export default function VehiclesPage() {
             Compare vehicles by speed, handling, value and Vice Score. This is
             a demo database until real GTA 6 data becomes available.
           </p>
+
+          <ModuleAskButton prompt="Help me choose the best first vehicle in GTA 6." />
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -143,6 +148,7 @@ export default function VehiclesPage() {
         </div>
       </section>
 
+      <AskViceChat />
       <Footer />
     </main>
   );
