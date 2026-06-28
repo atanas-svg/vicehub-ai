@@ -16,6 +16,7 @@ type MoneyFilter =
   | "Late Game";
 
 type MoneyTag = Exclude<MoneyFilter, "All">;
+type SortOption = "Vice Score" | "Profit" | "Lowest Risk" | "Fastest";
 
 const filters: MoneyFilter[] = [
   "All",
@@ -24,6 +25,13 @@ const filters: MoneyFilter[] = [
   "Fast Cash",
   "Early Game",
   "Late Game",
+];
+
+const sortOptions: SortOption[] = [
+  "Vice Score",
+  "Profit",
+  "Lowest Risk",
+  "Fastest",
 ];
 
 const moneyMethods: {
@@ -105,6 +113,24 @@ const moneyMethods: {
   },
 ];
 
+const profitRank: Record<string, number> = {
+  Medium: 1,
+  High: 2,
+  "Very High": 3,
+};
+
+const riskRank: Record<string, number> = {
+  Low: 1,
+  Medium: 2,
+  High: 3,
+};
+
+const timeRank: Record<string, number> = {
+  Fast: 1,
+  Medium: 2,
+  "Long-term": 3,
+};
+
 function Badge({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
@@ -116,19 +142,36 @@ function Badge({ label, value }: { label: string; value: string }) {
 
 export default function MoneyPage() {
   const [activeFilter, setActiveFilter] = useState<MoneyFilter>("All");
+  const [activeSort, setActiveSort] = useState<SortOption>("Vice Score");
   const [search, setSearch] = useState("");
 
-  const visibleMethods = moneyMethods.filter((method) => {
-    const matchesFilter =
-      activeFilter === "All" || method.tags.includes(activeFilter);
+  const visibleMethods = moneyMethods
+    .filter((method) => {
+      const matchesFilter =
+        activeFilter === "All" || method.tags.includes(activeFilter);
 
-    const searchText =
-      `${method.title} ${method.difficulty} ${method.profit} ${method.risk} ${method.time} ${method.bestFor} ${method.desc} ${method.tags.join(" ")}`.toLowerCase();
+      const searchText =
+        `${method.title} ${method.difficulty} ${method.profit} ${method.risk} ${method.time} ${method.bestFor} ${method.desc} ${method.tags.join(" ")}`.toLowerCase();
 
-    const matchesSearch = searchText.includes(search.toLowerCase());
+      const matchesSearch = searchText.includes(search.toLowerCase());
 
-    return matchesFilter && matchesSearch;
-  });
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (activeSort === "Profit") {
+        return profitRank[b.profit] - profitRank[a.profit];
+      }
+
+      if (activeSort === "Lowest Risk") {
+        return riskRank[a.risk] - riskRank[b.risk];
+      }
+
+      if (activeSort === "Fastest") {
+        return timeRank[a.time] - timeRank[b.time];
+      }
+
+      return b.score - a.score;
+    });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -146,8 +189,8 @@ export default function MoneyPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Search and filter demo money strategies by risk, profit, speed and
-            game stage.
+            Search, filter and sort demo money strategies by risk, profit,
+            speed and Vice Score.
           </p>
 
           <ModuleAskButton prompt="Make me a smart GTA 6 money plan." />
@@ -205,8 +248,25 @@ export default function MoneyPage() {
           ))}
         </div>
 
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          {sortOptions.map((sort) => (
+            <button
+              key={sort}
+              onClick={() => setActiveSort(sort)}
+              className={
+                activeSort === sort
+                  ? "rounded-full border border-cyan-400/40 bg-cyan-400/10 px-5 py-2 text-sm font-bold text-cyan-300"
+                  : "rounded-full border border-white/10 bg-black/30 px-5 py-2 text-sm font-bold text-gray-400 transition hover:border-cyan-400/50 hover:text-white"
+              }
+            >
+              Sort: {sort}
+            </button>
+          ))}
+        </div>
+
         <p className="mt-6 text-center text-sm text-gray-500">
-          Showing {visibleMethods.length} money strategies
+          Showing {visibleMethods.length} money strategies · Sorted by{" "}
+          {activeSort}
         </p>
 
         {visibleMethods.length > 0 ? (
