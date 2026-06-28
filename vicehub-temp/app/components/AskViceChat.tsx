@@ -7,11 +7,20 @@ type Message = {
   text: string;
 };
 
+const STORAGE_KEY = "vicehub-ask-vice-chat";
+
 const quickPrompts = [
   "What should I do first?",
   "How do I make money fast?",
   "Best first vehicle?",
   "Help me reach 100%",
+];
+
+const defaultMessages: Message[] = [
+  {
+    role: "vice",
+    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with money, vehicles, weapons, map locations and 100% completion.",
+  },
 ];
 
 function getViceReply(question: string) {
@@ -78,14 +87,31 @@ export default function AskViceChat() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "vice",
-      text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with money, vehicles, weapons, map locations and 100% completion.",
-    },
-  ]);
+  const [loaded, setLoaded] = useState(false);
+  const [messages, setMessages] = useState<Message[]>(defaultMessages);
 
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const savedChat = localStorage.getItem(STORAGE_KEY);
+
+    if (savedChat) {
+      try {
+        const parsedMessages = JSON.parse(savedChat) as Message[];
+        setMessages(parsedMessages.length > 0 ? parsedMessages : defaultMessages);
+      } catch {
+        setMessages(defaultMessages);
+      }
+    }
+
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  }, [messages, loaded]);
 
   useEffect(() => {
     const openChat = (event: Event) => {
@@ -117,7 +143,7 @@ export default function AskViceChat() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, thinking]);
+  }, [messages, thinking, open]);
 
   function sendMessage(value?: string) {
     const message = (value ?? input).trim();
@@ -145,6 +171,8 @@ export default function AskViceChat() {
         text: "Chat reset. Ask me about money, vehicles, weapons, the map or 100% completion.",
       },
     ]);
+
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   return (
@@ -157,6 +185,7 @@ export default function AskViceChat() {
                 Vice AI
               </p>
               <h3 className="text-xl font-black text-white">Ask Vice</h3>
+              <p className="mt-1 text-xs text-cyan-300">Saved locally</p>
             </div>
 
             <div className="flex gap-2">
