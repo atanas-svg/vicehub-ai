@@ -116,11 +116,19 @@ function Badge({ label, value }: { label: string; value: string }) {
 
 export default function MoneyPage() {
   const [activeFilter, setActiveFilter] = useState<MoneyFilter>("All");
+  const [search, setSearch] = useState("");
 
-  const visibleMethods =
-    activeFilter === "All"
-      ? moneyMethods
-      : moneyMethods.filter((method) => method.tags.includes(activeFilter));
+  const visibleMethods = moneyMethods.filter((method) => {
+    const matchesFilter =
+      activeFilter === "All" || method.tags.includes(activeFilter);
+
+    const searchText =
+      `${method.title} ${method.difficulty} ${method.profit} ${method.risk} ${method.time} ${method.bestFor} ${method.desc} ${method.tags.join(" ")}`.toLowerCase();
+
+    const matchesSearch = searchText.includes(search.toLowerCase());
+
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -138,8 +146,8 @@ export default function MoneyPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            A demo money strategy board for GTA 6. Filter money methods by risk,
-            profit, speed and game stage.
+            Search and filter demo money strategies by risk, profit, speed and
+            game stage.
           </p>
 
           <ModuleAskButton prompt="Make me a smart GTA 6 money plan." />
@@ -161,7 +169,27 @@ export default function MoneyPage() {
           </p>
         </div>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <div className="mx-auto mt-10 max-w-2xl">
+          <div className="flex gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-3">
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search money strategies..."
+              className="flex-1 rounded-2xl bg-black/40 px-5 py-3 text-sm text-white outline-none placeholder:text-gray-500 focus:ring-2 focus:ring-pink-500/40"
+            />
+
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -177,52 +205,68 @@ export default function MoneyPage() {
           ))}
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {visibleMethods.map((method) => (
-            <div
-              key={method.title}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
-            >
-              <div className="mb-5 flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm text-cyan-300">{method.difficulty}</p>
-                  <h2 className="mt-1 text-2xl font-black">{method.title}</h2>
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Showing {visibleMethods.length} money strategies
+        </p>
+
+        {visibleMethods.length > 0 ? (
+          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {visibleMethods.map((method) => (
+              <div
+                key={method.title}
+                className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+              >
+                <div className="mb-5 flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm text-cyan-300">{method.difficulty}</p>
+                    <h2 className="mt-1 text-2xl font-black">{method.title}</h2>
+                  </div>
+
+                  <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
+                    <p className="text-xs text-pink-300">Vice Score</p>
+                    <p className="text-xl font-black text-white">
+                      {method.score}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
-                  <p className="text-xs text-pink-300">Vice Score</p>
-                  <p className="text-xl font-black text-white">
-                    {method.score}
-                  </p>
+                <p className="mb-5 text-sm text-gray-400">{method.desc}</p>
+
+                <div className="mb-5 flex flex-wrap gap-2">
+                  {method.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-gray-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+                  <p className="text-xs text-cyan-300">Best for</p>
+                  <p className="mt-1 font-bold text-white">{method.bestFor}</p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <Badge label="Profit" value={method.profit} />
+                  <Badge label="Risk" value={method.risk} />
+                  <Badge label="Time" value={method.time} />
                 </div>
               </div>
-
-              <p className="mb-5 text-sm text-gray-400">{method.desc}</p>
-
-              <div className="mb-5 flex flex-wrap gap-2">
-                {method.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-gray-300"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-                <p className="text-xs text-cyan-300">Best for</p>
-                <p className="mt-1 font-bold text-white">{method.bestFor}</p>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <Badge label="Profit" value={method.profit} />
-                <Badge label="Risk" value={method.risk} />
-                <Badge label="Time" value={method.time} />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
+            <p className="text-4xl">🔍</p>
+            <h3 className="mt-4 text-2xl font-black">
+              No money strategies found
+            </h3>
+            <p className="mt-3 text-sm text-gray-400">
+              Try another search word or switch the filter back to All.
+            </p>
+          </div>
+        )}
       </section>
 
       <AskViceChat />
