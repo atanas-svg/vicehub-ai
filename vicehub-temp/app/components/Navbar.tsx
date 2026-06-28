@@ -1,16 +1,18 @@
+import Link from "next/link";
+
 export default function Navbar() {
   return (
     <nav className="relative z-10 flex items-center justify-between px-8 py-6">
-      <h2 className="text-2xl font-black tracking-widest text-white">
+      <Link href="/" className="text-2xl font-black tracking-widest text-white">
         VICEHUB AI
-      </h2>
+      </Link>
 
-      <div className="hidden md:flex gap-8 text-gray-300">
-        <button className="hover:text-pink-400 transition">AI</button>
-        <button className="hover:text-pink-400 transition">Map</button>
-        <button className="hover:text-pink-400 transition">Vehicles</button>
-        <button className="hover:text-pink-400 transition">Weapons</button>
-        <button className="hover:text-pink-400 transition">Tracker</button>
+      <div className="hidden gap-8 text-gray-300 md:flex">
+        <Link href="/ai" className="transition hover:text-pink-400">AI</Link>
+        <Link href="/map" className="transition hover:text-pink-400">Map</Link>
+        <Link href="/vehicles" className="transition hover:text-pink-400">Vehicles</Link>
+        <Link href="/weapons" className="transition hover:text-pink-400">Weapons</Link>
+        <Link href="/tracker" className="transition hover:text-pink-400">Tracker</Link>
       </div>
     </nav>
   );
