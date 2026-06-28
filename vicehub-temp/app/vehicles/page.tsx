@@ -106,11 +106,19 @@ function StatBar({ label, value }: { label: string; value: number }) {
 
 export default function VehiclesPage() {
   const [activeFilter, setActiveFilter] = useState<VehicleCategory>("All");
+  const [search, setSearch] = useState("");
 
-  const visibleVehicles =
-    activeFilter === "All"
-      ? vehicles
-      : vehicles.filter((vehicle) => vehicle.category === activeFilter);
+  const visibleVehicles = vehicles.filter((vehicle) => {
+    const matchesFilter =
+      activeFilter === "All" || vehicle.category === activeFilter;
+
+    const searchText =
+      `${vehicle.name} ${vehicle.category} ${vehicle.type} ${vehicle.bestFor} ${vehicle.desc}`.toLowerCase();
+
+    const matchesSearch = searchText.includes(search.toLowerCase());
+
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -128,15 +136,34 @@ export default function VehiclesPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            A demo vehicle database for comparing speed, handling, value and
-            Vice Score. Real GTA 6 vehicle stats will be added when reliable
-            data becomes available.
+            Search and filter demo vehicles by speed, handling, value, type and
+            Vice Score.
           </p>
 
           <ModuleAskButton prompt="What is the best first vehicle strategy in GTA 6?" />
         </div>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <div className="mx-auto mt-10 max-w-2xl">
+          <div className="flex gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-3">
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search vehicles..."
+              className="flex-1 rounded-2xl bg-black/40 px-5 py-3 text-sm text-white outline-none placeholder:text-gray-500 focus:ring-2 focus:ring-pink-500/40"
+            />
+
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -152,47 +179,61 @@ export default function VehiclesPage() {
           ))}
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {visibleVehicles.map((vehicle) => (
-            <div
-              key={vehicle.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
-            >
-              <div className="mb-5 flex items-start justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-pink-500/30 bg-pink-500/10 text-3xl">
-                    {vehicle.icon}
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Showing {visibleVehicles.length} vehicles
+        </p>
+
+        {visibleVehicles.length > 0 ? (
+          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {visibleVehicles.map((vehicle) => (
+              <div
+                key={vehicle.name}
+                className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+              >
+                <div className="mb-5 flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-pink-500/30 bg-pink-500/10 text-3xl">
+                      {vehicle.icon}
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-cyan-300">{vehicle.type}</p>
+                      <h2 className="text-2xl font-black">{vehicle.name}</h2>
+                    </div>
                   </div>
 
-                  <div>
-                    <p className="text-sm text-cyan-300">{vehicle.type}</p>
-                    <h2 className="text-2xl font-black">{vehicle.name}</h2>
+                  <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
+                    <p className="text-xs text-pink-300">Vice Score</p>
+                    <p className="text-xl font-black text-white">
+                      {vehicle.score}
+                    </p>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
-                  <p className="text-xs text-pink-300">Vice Score</p>
-                  <p className="text-xl font-black text-white">
-                    {vehicle.score}
-                  </p>
+                <p className="mb-5 text-sm text-gray-400">{vehicle.desc}</p>
+
+                <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+                  <p className="text-xs text-cyan-300">Best for</p>
+                  <p className="mt-1 font-bold text-white">{vehicle.bestFor}</p>
+                </div>
+
+                <div className="space-y-4">
+                  <StatBar label="Speed" value={vehicle.speed} />
+                  <StatBar label="Handling" value={vehicle.handling} />
+                  <StatBar label="Value" value={vehicle.value} />
                 </div>
               </div>
-
-              <p className="mb-5 text-sm text-gray-400">{vehicle.desc}</p>
-
-              <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-                <p className="text-xs text-cyan-300">Best for</p>
-                <p className="mt-1 font-bold text-white">{vehicle.bestFor}</p>
-              </div>
-
-              <div className="space-y-4">
-                <StatBar label="Speed" value={vehicle.speed} />
-                <StatBar label="Handling" value={vehicle.handling} />
-                <StatBar label="Value" value={vehicle.value} />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
+            <p className="text-4xl">🔍</p>
+            <h3 className="mt-4 text-2xl font-black">No vehicles found</h3>
+            <p className="mt-3 text-sm text-gray-400">
+              Try another search word or switch the filter back to All.
+            </p>
+          </div>
+        )}
       </section>
 
       <AskViceChat />
