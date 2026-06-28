@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
@@ -9,6 +9,8 @@ import Navbar from "../components/Navbar";
 
 type PinType = "Mission" | "Collectible" | "Vehicle" | "Weapon" | "Safehouse";
 type FilterType = "All" | PinType;
+
+const STORAGE_KEY = "vicehub-saved-map-pins";
 
 const filters: FilterType[] = [
   "All",
@@ -75,12 +77,43 @@ const mapPins = [
 export default function MapPage() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [search, setSearch] = useState("");
+  const [savedPins, setSavedPins] = useState<string[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      try {
+        setSavedPins(JSON.parse(saved) as string[]);
+      } catch {
+        setSavedPins([]);
+      }
+    }
+
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPins));
+  }, [savedPins, loaded]);
+
+  function toggleSavedPin(pinTitle: string) {
+    setSavedPins((current) =>
+      current.includes(pinTitle)
+        ? current.filter((title) => title !== pinTitle)
+        : [...current, pinTitle]
+    );
+  }
 
   const visiblePins = mapPins.filter((pin) => {
-    const matchesFilter =
-      activeFilter === "All" || pin.type === activeFilter;
+    const matchesFilter = activeFilter === "All" || pin.type === activeFilter;
 
-    const searchText = `${pin.title} ${pin.type} ${pin.area} ${pin.status} ${pin.desc}`.toLowerCase();
+    const searchText =
+      `${pin.title} ${pin.type} ${pin.area} ${pin.status} ${pin.desc}`.toLowerCase();
+
     const matchesSearch = searchText.includes(search.toLowerCase());
 
     return matchesFilter && matchesSearch;
@@ -102,11 +135,27 @@ export default function MapPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            A demo preview of the future ViceHub map. Search and filter map pins
-            by missions, collectibles, vehicles, weapons and safehouses.
+            Search, filter and save demo map pins for missions, collectibles,
+            vehicles, weapons and safehouses.
           </p>
 
           <ModuleAskButton prompt="Tell me how the ViceHub interactive map will help me in GTA 6." />
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-4">
+          <div className="rounded-3xl border border-pink-500/30 bg-pink-500/10 p-5 text-center">
+            <p className="text-3xl font-black">{savedPins.length}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-pink-300">
+              Saved Pins
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-cyan-400/30 bg-cyan-400/10 p-5 text-center">
+            <p className="text-3xl font-black">{visiblePins.length}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-cyan-300">
+              Showing
+            </p>
+          </div>
         </div>
 
         <div className="mx-auto mt-10 max-w-2xl">
@@ -229,15 +278,19 @@ export default function MapPage() {
               </div>
 
               <div className="relative flex-1">
-                {visiblePins.map((pin) => (
-                  <div
-                    key={pin.title}
-                    className="absolute"
-                    style={{ left: pin.left, top: pin.top }}
-                  >
-                    <MapPin icon={pin.icon} label={pin.type} />
-                  </div>
-                ))}
+                {visiblePins.map((pin) => {
+                  const saved = savedPins.includes(pin.title);
+
+                  return (
+                    <div
+                      key={pin.title}
+                      className="absolute"
+                      style={{ left: pin.left, top: pin.top }}
+                    >
+                      <MapPin icon={pin.icon} label={pin.type} saved={saved} />
+                    </div>
+                  );
+                })}
               </div>
 
               <p className="text-sm text-gray-400">
@@ -250,29 +303,48 @@ export default function MapPage() {
 
           <div className="space-y-4">
             {visiblePins.length > 0 ? (
-              visiblePins.map((pin) => (
-                <div
-                  key={pin.title}
-                  className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
-                >
-                  <div className="mb-3 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{pin.icon}</span>
-                      <div>
-                        <p className="text-sm text-cyan-300">{pin.type}</p>
-                        <h3 className="text-xl font-black">{pin.title}</h3>
+              visiblePins.map((pin) => {
+                const saved = savedPins.includes(pin.title);
+
+                return (
+                  <div
+                    key={pin.title}
+                    className={
+                      saved
+                        ? "rounded-3xl border border-cyan-400/40 bg-cyan-400/[0.06] p-5 transition hover:-translate-y-1 hover:border-cyan-400/70"
+                        : "rounded-3xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+                    }
+                  >
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{pin.icon}</span>
+                        <div>
+                          <p className="text-sm text-cyan-300">{pin.type}</p>
+                          <h3 className="text-xl font-black">{pin.title}</h3>
+                        </div>
                       </div>
+
+                      <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-gray-300">
+                        {pin.status}
+                      </span>
                     </div>
 
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-gray-300">
-                      {pin.status}
-                    </span>
-                  </div>
+                    <p className="text-sm text-pink-300">{pin.area}</p>
+                    <p className="mt-2 text-sm text-gray-400">{pin.desc}</p>
 
-                  <p className="text-sm text-pink-300">{pin.area}</p>
-                  <p className="mt-2 text-sm text-gray-400">{pin.desc}</p>
-                </div>
-              ))
+                    <button
+                      onClick={() => toggleSavedPin(pin.title)}
+                      className={
+                        saved
+                          ? "mt-5 w-full rounded-2xl border border-cyan-400/40 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20"
+                          : "mt-5 w-full rounded-2xl border border-white/10 bg-black/30 px-5 py-3 text-sm font-black text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+                      }
+                    >
+                      {saved ? "Saved Pin ✓" : "Save Pin"}
+                    </button>
+                  </div>
+                );
+              })
             ) : (
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
                 <p className="text-4xl">🔍</p>
@@ -292,15 +364,29 @@ export default function MapPage() {
   );
 }
 
-function MapPin({ icon, label }: { icon: string; label: string }) {
+function MapPin({
+  icon,
+  label,
+  saved,
+}: {
+  icon: string;
+  label: string;
+  saved: boolean;
+}) {
   return (
     <div className="group flex flex-col items-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-pink-500/40 bg-pink-600 text-xl shadow-[0_0_30px_rgba(236,72,153,0.45)] transition group-hover:scale-110">
+      <div
+        className={
+          saved
+            ? "flex h-12 w-12 items-center justify-center rounded-full border border-cyan-400/50 bg-cyan-500 text-xl shadow-[0_0_35px_rgba(34,211,238,0.5)] transition group-hover:scale-110"
+            : "flex h-12 w-12 items-center justify-center rounded-full border border-pink-500/40 bg-pink-600 text-xl shadow-[0_0_30px_rgba(236,72,153,0.45)] transition group-hover:scale-110"
+        }
+      >
         {icon}
       </div>
 
       <span className="mt-2 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-xs text-gray-200">
-        {label}
+        {saved ? "Saved" : label}
       </span>
     </div>
   );
