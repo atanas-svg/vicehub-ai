@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { label: "AI", href: "/ai" },
@@ -14,9 +14,40 @@ const navItems = [
   { label: "Saved", href: "/saved" },
 ] as const;
 
+const savedStorageKeys = [
+  "vicehub-saved-map-pins",
+  "vicehub-saved-vehicles",
+  "vicehub-saved-weapons",
+  "vicehub-saved-money-strategies",
+];
+
+function getSavedCount() {
+  let total = 0;
+
+  savedStorageKeys.forEach((key) => {
+    const saved = localStorage.getItem(key);
+
+    if (!saved) return;
+
+    try {
+      const parsed = JSON.parse(saved) as string[];
+      total += parsed.length;
+    } catch {
+      total += 0;
+    }
+  });
+
+  return total;
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [savedCount, setSavedCount] = useState(0);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setSavedCount(getSavedCount());
+  }, [pathname]);
 
   return (
     <nav className="relative z-30 px-6 py-6">
@@ -36,6 +67,7 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {navItems.map((item) => {
             const active = pathname === item.href;
+            const isSaved = item.href === "/saved";
 
             return (
               <Link
@@ -47,7 +79,15 @@ export default function Navbar() {
                     : "rounded-full px-4 py-2 text-sm font-bold text-gray-300 transition hover:bg-white/5 hover:text-white"
                 }
               >
-                {item.label}
+                <span className="inline-flex items-center gap-2">
+                  {item.label}
+
+                  {isSaved && savedCount > 0 && (
+                    <span className="rounded-full bg-cyan-400 px-2 py-0.5 text-xs font-black text-black">
+                      {savedCount}
+                    </span>
+                  )}
+                </span>
               </Link>
             );
           })}
@@ -66,6 +106,7 @@ export default function Navbar() {
           <div className="grid gap-2">
             {navItems.map((item) => {
               const active = pathname === item.href;
+              const isSaved = item.href === "/saved";
 
               return (
                 <Link
@@ -78,7 +119,15 @@ export default function Navbar() {
                       : "rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-bold text-gray-300"
                   }
                 >
-                  {item.label}
+                  <span className="inline-flex items-center gap-2">
+                    {item.label}
+
+                    {isSaved && savedCount > 0 && (
+                      <span className="rounded-full bg-cyan-400 px-2 py-0.5 text-xs font-black text-black">
+                        {savedCount}
+                      </span>
+                    )}
+                  </span>
                 </Link>
               );
             })}
