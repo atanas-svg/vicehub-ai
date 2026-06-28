@@ -1,3 +1,4 @@
+import Footer from "./Footer";
 import BackgroundGlow from "./BackgroundGlow";
 import Navbar from "./Navbar";
 
@@ -41,6 +42,7 @@ export default function ComingSoonPage({
           ))}
         </div>
       </section>
+     <Footer />
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import Footer from "./components/Footer";
 import AskViceChat from "./components/AskViceChat";
 import BackgroundGlow from "./components/BackgroundGlow";
 import Navbar from "./components/Navbar";
@@ -11,6 +12,8 @@ export default function Home() {
       <Navbar />
       <Hero />
       <FeatureGrid />
-    <AskViceChat /> </main>
+      <AskViceChat />
+      <Footer />
+    </main>
   );
 }
