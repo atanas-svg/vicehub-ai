@@ -74,11 +74,17 @@ const mapPins = [
 
 export default function MapPage() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
+  const [search, setSearch] = useState("");
 
-  const visiblePins =
-    activeFilter === "All"
-      ? mapPins
-      : mapPins.filter((pin) => pin.type === activeFilter);
+  const visiblePins = mapPins.filter((pin) => {
+    const matchesFilter =
+      activeFilter === "All" || pin.type === activeFilter;
+
+    const searchText = `${pin.title} ${pin.type} ${pin.area} ${pin.status} ${pin.desc}`.toLowerCase();
+    const matchesSearch = searchText.includes(search.toLowerCase());
+
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -96,14 +102,34 @@ export default function MapPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            A demo preview of the future ViceHub map. Real GTA 6 locations will
-            be added when reliable data becomes available.
+            A demo preview of the future ViceHub map. Search and filter map pins
+            by missions, collectibles, vehicles, weapons and safehouses.
           </p>
 
           <ModuleAskButton prompt="Tell me how the ViceHub interactive map will help me in GTA 6." />
         </div>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <div className="mx-auto mt-10 max-w-2xl">
+          <div className="flex gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-3">
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search map pins..."
+              className="flex-1 rounded-2xl bg-black/40 px-5 py-3 text-sm text-white outline-none placeholder:text-gray-500 focus:ring-2 focus:ring-pink-500/40"
+            />
+
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -198,7 +224,7 @@ export default function MapPage() {
                 </div>
 
                 <span className="rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-2 text-sm text-pink-300">
-                  {activeFilter}
+                  {visiblePins.length} pins
                 </span>
               </div>
 
@@ -223,29 +249,39 @@ export default function MapPage() {
           </div>
 
           <div className="space-y-4">
-            {visiblePins.map((pin) => (
-              <div
-                key={pin.title}
-                className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
-              >
-                <div className="mb-3 flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{pin.icon}</span>
-                    <div>
-                      <p className="text-sm text-cyan-300">{pin.type}</p>
-                      <h3 className="text-xl font-black">{pin.title}</h3>
+            {visiblePins.length > 0 ? (
+              visiblePins.map((pin) => (
+                <div
+                  key={pin.title}
+                  className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+                >
+                  <div className="mb-3 flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{pin.icon}</span>
+                      <div>
+                        <p className="text-sm text-cyan-300">{pin.type}</p>
+                        <h3 className="text-xl font-black">{pin.title}</h3>
+                      </div>
                     </div>
+
+                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-gray-300">
+                      {pin.status}
+                    </span>
                   </div>
 
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-gray-300">
-                    {pin.status}
-                  </span>
+                  <p className="text-sm text-pink-300">{pin.area}</p>
+                  <p className="mt-2 text-sm text-gray-400">{pin.desc}</p>
                 </div>
-
-                <p className="text-sm text-pink-300">{pin.area}</p>
-                <p className="mt-2 text-sm text-gray-400">{pin.desc}</p>
+              ))
+            ) : (
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
+                <p className="text-4xl">🔍</p>
+                <h3 className="mt-4 text-2xl font-black">No pins found</h3>
+                <p className="mt-3 text-sm text-gray-400">
+                  Try another search word or switch the filter back to All.
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
