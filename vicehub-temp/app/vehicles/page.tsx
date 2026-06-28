@@ -8,8 +8,10 @@ import ModuleAskButton from "../components/ModuleAskButton";
 import Navbar from "../components/Navbar";
 
 type VehicleCategory = "All" | "Cars" | "Bikes" | "Boats" | "Special";
+type SortOption = "Vice Score" | "Speed" | "Handling" | "Value";
 
 const filters: VehicleCategory[] = ["All", "Cars", "Bikes", "Boats", "Special"];
+const sortOptions: SortOption[] = ["Vice Score", "Speed", "Handling", "Value"];
 
 const vehicles = [
   {
@@ -106,19 +108,28 @@ function StatBar({ label, value }: { label: string; value: number }) {
 
 export default function VehiclesPage() {
   const [activeFilter, setActiveFilter] = useState<VehicleCategory>("All");
+  const [activeSort, setActiveSort] = useState<SortOption>("Vice Score");
   const [search, setSearch] = useState("");
 
-  const visibleVehicles = vehicles.filter((vehicle) => {
-    const matchesFilter =
-      activeFilter === "All" || vehicle.category === activeFilter;
+  const visibleVehicles = vehicles
+    .filter((vehicle) => {
+      const matchesFilter =
+        activeFilter === "All" || vehicle.category === activeFilter;
 
-    const searchText =
-      `${vehicle.name} ${vehicle.category} ${vehicle.type} ${vehicle.bestFor} ${vehicle.desc}`.toLowerCase();
+      const searchText =
+        `${vehicle.name} ${vehicle.category} ${vehicle.type} ${vehicle.bestFor} ${vehicle.desc}`.toLowerCase();
 
-    const matchesSearch = searchText.includes(search.toLowerCase());
+      const matchesSearch = searchText.includes(search.toLowerCase());
 
-    return matchesFilter && matchesSearch;
-  });
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (activeSort === "Speed") return b.speed - a.speed;
+      if (activeSort === "Handling") return b.handling - a.handling;
+      if (activeSort === "Value") return b.value - a.value;
+
+      return b.score - a.score;
+    });
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -136,7 +147,7 @@ export default function VehiclesPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Search and filter demo vehicles by speed, handling, value, type and
+            Search, filter and sort demo vehicles by speed, handling, value and
             Vice Score.
           </p>
 
@@ -179,8 +190,24 @@ export default function VehiclesPage() {
           ))}
         </div>
 
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          {sortOptions.map((sort) => (
+            <button
+              key={sort}
+              onClick={() => setActiveSort(sort)}
+              className={
+                activeSort === sort
+                  ? "rounded-full border border-cyan-400/40 bg-cyan-400/10 px-5 py-2 text-sm font-bold text-cyan-300"
+                  : "rounded-full border border-white/10 bg-black/30 px-5 py-2 text-sm font-bold text-gray-400 transition hover:border-cyan-400/50 hover:text-white"
+              }
+            >
+              Sort: {sort}
+            </button>
+          ))}
+        </div>
+
         <p className="mt-6 text-center text-sm text-gray-500">
-          Showing {visibleVehicles.length} vehicles
+          Showing {visibleVehicles.length} vehicles · Sorted by {activeSort}
         </p>
 
         {visibleVehicles.length > 0 ? (
