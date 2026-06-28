@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AskViceChat from "../components/AskViceChat";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Footer from "../components/Footer";
@@ -9,6 +9,8 @@ import Navbar from "../components/Navbar";
 
 type VehicleCategory = "All" | "Cars" | "Bikes" | "Boats" | "Special";
 type SortOption = "Vice Score" | "Speed" | "Handling" | "Value";
+
+const STORAGE_KEY = "vicehub-saved-vehicles";
 
 const filters: VehicleCategory[] = ["All", "Cars", "Bikes", "Boats", "Special"];
 const sortOptions: SortOption[] = ["Vice Score", "Speed", "Handling", "Value"];
@@ -110,6 +112,36 @@ export default function VehiclesPage() {
   const [activeFilter, setActiveFilter] = useState<VehicleCategory>("All");
   const [activeSort, setActiveSort] = useState<SortOption>("Vice Score");
   const [search, setSearch] = useState("");
+  const [savedVehicles, setSavedVehicles] = useState<string[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      try {
+        setSavedVehicles(JSON.parse(saved) as string[]);
+      } catch {
+        setSavedVehicles([]);
+      }
+    }
+
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedVehicles));
+  }, [savedVehicles, loaded]);
+
+  function toggleSavedVehicle(vehicleName: string) {
+    setSavedVehicles((current) =>
+      current.includes(vehicleName)
+        ? current.filter((name) => name !== vehicleName)
+        : [...current, vehicleName]
+    );
+  }
 
   const visibleVehicles = vehicles
     .filter((vehicle) => {
@@ -147,11 +179,27 @@ export default function VehiclesPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Search, filter and sort demo vehicles by speed, handling, value and
-            Vice Score.
+            Search, filter, sort and save demo vehicles by speed, handling,
+            value and Vice Score.
           </p>
 
           <ModuleAskButton prompt="What is the best first vehicle strategy in GTA 6?" />
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-4">
+          <div className="rounded-3xl border border-pink-500/30 bg-pink-500/10 p-5 text-center">
+            <p className="text-3xl font-black">{savedVehicles.length}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-pink-300">
+              Saved Rides
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-cyan-400/30 bg-cyan-400/10 p-5 text-center">
+            <p className="text-3xl font-black">{visibleVehicles.length}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-cyan-300">
+              Showing
+            </p>
+          </div>
         </div>
 
         <div className="mx-auto mt-10 max-w-2xl">
@@ -212,45 +260,64 @@ export default function VehiclesPage() {
 
         {visibleVehicles.length > 0 ? (
           <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {visibleVehicles.map((vehicle) => (
-              <div
-                key={vehicle.name}
-                className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
-              >
-                <div className="mb-5 flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-pink-500/30 bg-pink-500/10 text-3xl">
-                      {vehicle.icon}
+            {visibleVehicles.map((vehicle) => {
+              const saved = savedVehicles.includes(vehicle.name);
+
+              return (
+                <div
+                  key={vehicle.name}
+                  className={
+                    saved
+                      ? "rounded-3xl border border-cyan-400/40 bg-cyan-400/[0.06] p-6 transition hover:-translate-y-1 hover:border-cyan-400/70"
+                      : "rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-pink-500/60 hover:bg-white/[0.07]"
+                  }
+                >
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-pink-500/30 bg-pink-500/10 text-3xl">
+                        {vehicle.icon}
+                      </div>
+
+                      <div>
+                        <p className="text-sm text-cyan-300">{vehicle.type}</p>
+                        <h2 className="text-2xl font-black">{vehicle.name}</h2>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-sm text-cyan-300">{vehicle.type}</p>
-                      <h2 className="text-2xl font-black">{vehicle.name}</h2>
+                    <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
+                      <p className="text-xs text-pink-300">Vice Score</p>
+                      <p className="text-xl font-black text-white">
+                        {vehicle.score}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-center">
-                    <p className="text-xs text-pink-300">Vice Score</p>
-                    <p className="text-xl font-black text-white">
-                      {vehicle.score}
-                    </p>
+                  <p className="mb-5 text-sm text-gray-400">{vehicle.desc}</p>
+
+                  <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+                    <p className="text-xs text-cyan-300">Best for</p>
+                    <p className="mt-1 font-bold text-white">{vehicle.bestFor}</p>
                   </div>
-                </div>
 
-                <p className="mb-5 text-sm text-gray-400">{vehicle.desc}</p>
+                  <div className="space-y-4">
+                    <StatBar label="Speed" value={vehicle.speed} />
+                    <StatBar label="Handling" value={vehicle.handling} />
+                    <StatBar label="Value" value={vehicle.value} />
+                  </div>
 
-                <div className="mb-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-                  <p className="text-xs text-cyan-300">Best for</p>
-                  <p className="mt-1 font-bold text-white">{vehicle.bestFor}</p>
+                  <button
+                    onClick={() => toggleSavedVehicle(vehicle.name)}
+                    className={
+                      saved
+                        ? "mt-6 w-full rounded-2xl border border-cyan-400/40 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20"
+                        : "mt-6 w-full rounded-2xl border border-white/10 bg-black/30 px-5 py-3 text-sm font-black text-gray-300 transition hover:border-pink-500/60 hover:text-white"
+                    }
+                  >
+                    {saved ? "Saved Ride ✓" : "Save Ride"}
+                  </button>
                 </div>
-
-                <div className="space-y-4">
-                  <StatBar label="Speed" value={vehicle.speed} />
-                  <StatBar label="Handling" value={vehicle.handling} />
-                  <StatBar label="Value" value={vehicle.value} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
