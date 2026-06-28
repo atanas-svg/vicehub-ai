@@ -2,7 +2,7 @@ import Link from "next/link";
 import ModuleAskButton from "./ModuleAskButton";
 
 const heroStats = [
-  { label: "Modules", value: "7" },
+  { label: "Modules", value: "8" },
   { label: "AI Hub", value: "Live" },
   { label: "Build", value: "Beta" },
 ];
@@ -24,7 +24,7 @@ export default function Hero() {
 
       <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-gray-300 md:text-xl">
         ViceHub AI helps you plan money, vehicles, weapons, map routes, saved
-        items and 100% completion from one clean futuristic hub.
+        items, roadmap updates and 100% completion from one clean futuristic hub.
       </p>
 
       <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">

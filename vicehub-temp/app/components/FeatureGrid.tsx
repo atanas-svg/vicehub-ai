@@ -50,6 +50,13 @@ const features = [
     status: "New",
     desc: "View your saved map pins, vehicles, weapons and money strategies in one place.",
   },
+  {
+    title: "Roadmap",
+    href: "/roadmap",
+    icon: "🌴",
+    status: "New",
+    desc: "See what is live now, what is planned next and the future vision for ViceHub AI.",
+  },
 ];
 
 export default function FeatureGrid() {
@@ -66,11 +73,12 @@ export default function FeatureGrid() {
 
         <p className="mx-auto mt-5 max-w-2xl text-gray-400">
           Start with AI, then jump into map routes, saved items, vehicle picks,
-          weapon loadouts, money plans and full completion tracking.
+          weapon loadouts, money plans, roadmap updates and full completion
+          tracking.
         </p>
       </div>
 
-      <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         {features.map((feature) => (
           <Link
             key={feature.title}
@@ -99,7 +107,7 @@ export default function FeatureGrid() {
               {feature.title}
             </h3>
 
-            <p className="mt-3 min-h-[72px] text-sm leading-6 text-gray-400">
+            <p className="mt-3 min-h-[96px] text-sm leading-6 text-gray-400">
               {feature.desc}
             </p>
 
