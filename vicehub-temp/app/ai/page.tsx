@@ -6,6 +6,13 @@ import Navbar from "../components/Navbar";
 
 const commandCards = [
   {
+    title: "Search Hub",
+    icon: "🔎",
+    prompt: "Help me find the right ViceHub module for what I need.",
+    desc: "Search across AI, dashboard, map, vehicles, weapons, money, tracker, saved, roadmap and legal info.",
+    examples: ["Find module", "Lookup money", "Search weapons"],
+  },
+  {
     title: "Money Plan",
     icon: "💸",
     prompt: "Make me a smart GTA 6 money plan.",
@@ -71,8 +78,8 @@ const commandCards = [
 ];
 
 const stats = [
-  { label: "AI Modes", value: "9" },
-  { label: "Modules", value: "8+" },
+  { label: "AI Modes", value: "10" },
+  { label: "Modules", value: "10+" },
   { label: "Status", value: "Beta" },
 ];
 
@@ -93,9 +100,9 @@ export default function AiPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Ask Vice helps you plan money, vehicles, weapons, map routes, saved
-            items, roadmap updates, legal info and 100% completion from one
-            clean AI hub.
+            Ask Vice helps you search, plan money, vehicles, weapons, map
+            routes, saved items, roadmap updates, legal info and 100% completion
+            from one clean AI hub.
           </p>
 
           <ModuleAskButton prompt="Give me a smart beginner plan for GTA 6." />
