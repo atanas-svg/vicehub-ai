@@ -11,20 +11,38 @@ const STORAGE_KEY = "vicehub-ask-vice-chat";
 
 const quickPrompts = [
   "What should I do first?",
+  "Open search?",
   "Open dashboard?",
-  "Show my saved items?",
   "What is the roadmap?",
 ];
 
 const defaultMessages: Message[] = [
   {
     role: "vice",
-    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with dashboard progress, money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
+    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with search, dashboard progress, money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
   },
 ];
 
 function getViceReply(question: string) {
-  const q = question.toLowerCase();
+  const q = question.toLowerCase().trim();
+
+  if (q === "search" || q.includes("open search")) {
+    return "Open Search Hub when you want to find a ViceHub page fast. It lets you search across AI, dashboard, map, vehicles, weapons, money, tracker, saved items, roadmap and legal info.";
+  }
+
+  if (q.includes("find module") || q.includes("find page")) {
+    return "If you are not sure which module you need, use Search Hub. Type words like money, weapons, car, saved, roadmap, tracker or legal, and it will show the best matching page.";
+  }
+
+  if (
+    q.includes("money") ||
+    q.includes("cash") ||
+    q.includes("earn") ||
+    q.includes("rich") ||
+    q.includes("profit")
+  ) {
+    return "For money, open the Money Guide. Best early plan: finish story missions first, avoid luxury spending, save for useful weapons and one reliable vehicle, then use side jobs for steady income.";
+  }
 
   if (
     q.includes("dashboard") ||
@@ -53,7 +71,7 @@ function getViceReply(question: string) {
     q.includes("next update") ||
     q.includes("updates")
   ) {
-    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, dashboard, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
+    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, search, dashboard, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
   }
 
   if (q.includes("disclaimer") || q.includes("legal")) {
@@ -67,15 +85,6 @@ function getViceReply(question: string) {
     q.includes("copyright")
   ) {
     return "ViceHub AI is not an official Rockstar Games or Take-Two Interactive website. It is an independent fan-made companion hub, and all current content is demo prototype data.";
-  }
-
-  if (
-    q.includes("money") ||
-    q.includes("cash") ||
-    q.includes("earn") ||
-    q.includes("rich")
-  ) {
-    return "Best money plan: start with Story Missions First because it is low risk and fast. Do not buy luxury cars early. Save money for weapons, armor, useful vehicles and upgrades. After that, move to Side Jobs Route for steady income.";
   }
 
   if (
@@ -123,7 +132,16 @@ function getViceReply(question: string) {
     return "Smart start plan: finish early story missions, avoid wasting money, buy useful weapons first, get one reliable vehicle, then start tracking collectibles and side jobs. That gives you progress, money and control.";
   }
 
-  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: dashboard progress, money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
+  if (
+    q.includes("search") ||
+    q.includes("lookup") ||
+    q.includes("find") ||
+    q.includes("where can i find")
+  ) {
+    return "Search Hub is useful when you know what you want but not where it is. Try searching for money, weapons, vehicles, dashboard, saved, roadmap, tracker, map or legal.";
+  }
+
+  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: search, dashboard progress, money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
 }
 
 export default function AskViceChat() {
@@ -211,7 +229,7 @@ export default function AskViceChat() {
     setMessages([
       {
         role: "vice",
-        text: "Chat reset. Ask me about dashboard, money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
+        text: "Chat reset. Ask me about search, dashboard, money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
       },
     ]);
 
