@@ -16,6 +16,13 @@ const features = [
     desc: "View your saved items, tracker progress, chat activity and quick links from one control center.",
   },
   {
+    title: "Search Hub",
+    href: "/search",
+    icon: "🔎",
+    status: "New",
+    desc: "Search across AI, dashboard, map, vehicles, weapons, money, tracker, saved, roadmap and legal info.",
+  },
+  {
     title: "Interactive Map",
     href: "/map",
     icon: "🗺️",
@@ -79,9 +86,9 @@ export default function FeatureGrid() {
         </h2>
 
         <p className="mx-auto mt-5 max-w-2xl text-gray-400">
-          Start with AI, then jump into dashboard progress, map routes, saved
-          items, vehicle picks, weapon loadouts, money plans, roadmap updates
-          and full completion tracking.
+          Start with AI, search fast, then jump into dashboard progress, map
+          routes, saved items, vehicle picks, weapon loadouts, money plans,
+          roadmap updates and full completion tracking.
         </p>
       </div>
 
