@@ -12,19 +12,52 @@ const STORAGE_KEY = "vicehub-ask-vice-chat";
 const quickPrompts = [
   "What should I do first?",
   "How do I make money fast?",
-  "Best first vehicle?",
-  "Help me reach 100%",
+  "Show my saved items?",
+  "What is the roadmap?",
 ];
 
 const defaultMessages: Message[] = [
   {
     role: "vice",
-    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with money, vehicles, weapons, map locations and 100% completion.",
+    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
   },
 ];
 
 function getViceReply(question: string) {
   const q = question.toLowerCase();
+
+  if (
+    q.includes("saved") ||
+    q.includes("favorite") ||
+    q.includes("favourite") ||
+    q.includes("save") ||
+    q.includes("saved hub")
+  ) {
+    return "Saved Hub keeps your saved map pins, vehicles, weapons and money strategies in one place. Everything is saved locally in your browser, so your saved items stay after refresh.";
+  }
+
+  if (
+    q.includes("roadmap") ||
+    q.includes("future") ||
+    q.includes("planned") ||
+    q.includes("next update") ||
+    q.includes("updates")
+  ) {
+    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
+  }
+
+  if (q.includes("disclaimer") || q.includes("legal")) {
+    return "The Disclaimer page explains that ViceHub AI is a fan-made beta companion project, uses demo prototype data, and does not use official GTA 6 maps, assets or copyrighted game materials.";
+  }
+
+  if (
+    q.includes("official") ||
+    q.includes("rockstar") ||
+    q.includes("take-two") ||
+    q.includes("copyright")
+  ) {
+    return "ViceHub AI is not an official Rockstar Games or Take-Two Interactive website. It is an independent fan-made companion hub, and all current content is demo prototype data.";
+  }
 
   if (
     q.includes("money") ||
@@ -80,7 +113,7 @@ function getViceReply(question: string) {
     return "Smart start plan: finish early story missions, avoid wasting money, buy useful weapons first, get one reliable vehicle, then start tracking collectibles and side jobs. That gives you progress, money and control.";
   }
 
-  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: money plans, vehicle advice, weapon loadouts, map help and 100% completion guidance in one place.";
+  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
 }
 
 export default function AskViceChat() {
@@ -168,7 +201,7 @@ export default function AskViceChat() {
     setMessages([
       {
         role: "vice",
-        text: "Chat reset. Ask me about money, vehicles, weapons, the map or 100% completion.",
+        text: "Chat reset. Ask me about money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
       },
     ]);
 
