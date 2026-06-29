@@ -9,6 +9,13 @@ const features = [
     desc: "Your GTA 6 command center for money, vehicles, weapons, map help and 100% completion.",
   },
   {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: "📊",
+    status: "New",
+    desc: "View your saved items, tracker progress, chat activity and quick links from one control center.",
+  },
+  {
     title: "Interactive Map",
     href: "/map",
     icon: "🗺️",
@@ -72,13 +79,13 @@ export default function FeatureGrid() {
         </h2>
 
         <p className="mx-auto mt-5 max-w-2xl text-gray-400">
-          Start with AI, then jump into map routes, saved items, vehicle picks,
-          weapon loadouts, money plans, roadmap updates and full completion
-          tracking.
+          Start with AI, then jump into dashboard progress, map routes, saved
+          items, vehicle picks, weapon loadouts, money plans, roadmap updates
+          and full completion tracking.
         </p>
       </div>
 
-      <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
           <Link
             key={feature.title}
