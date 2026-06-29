@@ -11,7 +11,7 @@ const STORAGE_KEY = "vicehub-ask-vice-chat";
 
 const quickPrompts = [
   "What should I do first?",
-  "How do I make money fast?",
+  "Open dashboard?",
   "Show my saved items?",
   "What is the roadmap?",
 ];
@@ -19,12 +19,22 @@ const quickPrompts = [
 const defaultMessages: Message[] = [
   {
     role: "vice",
-    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
+    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with dashboard progress, money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
   },
 ];
 
 function getViceReply(question: string) {
   const q = question.toLowerCase();
+
+  if (
+    q.includes("dashboard") ||
+    q.includes("control center") ||
+    q.includes("summary") ||
+    q.includes("status") ||
+    q.includes("overview")
+  ) {
+    return "Dashboard is your ViceHub control center. It shows your saved items, map pins, vehicles, weapons, money plans, tracker progress and AI chat activity. Best next move: save one vehicle, one weapon, one money strategy and a few map pins, then check Dashboard again.";
+  }
 
   if (
     q.includes("saved") ||
@@ -43,7 +53,7 @@ function getViceReply(question: string) {
     q.includes("next update") ||
     q.includes("updates")
   ) {
-    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
+    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, dashboard, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
   }
 
   if (q.includes("disclaimer") || q.includes("legal")) {
@@ -113,7 +123,7 @@ function getViceReply(question: string) {
     return "Smart start plan: finish early story missions, avoid wasting money, buy useful weapons first, get one reliable vehicle, then start tracking collectibles and side jobs. That gives you progress, money and control.";
   }
 
-  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
+  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: dashboard progress, money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
 }
 
 export default function AskViceChat() {
@@ -201,7 +211,7 @@ export default function AskViceChat() {
     setMessages([
       {
         role: "vice",
-        text: "Chat reset. Ask me about money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
+        text: "Chat reset. Ask me about dashboard, money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
       },
     ]);
 
