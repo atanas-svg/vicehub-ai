@@ -13,12 +13,16 @@ const roadmapItems = [
     icon: "🤖",
     items: [
       "Ask Vice AI demo assistant",
+      "Dashboard control center",
+      "Search Hub for finding modules fast",
+      "Planner / Setup Builder",
       "Interactive map preview",
       "Vehicles database with search, filters, sort and save",
       "Weapons database with search, filters, sort and save",
       "Money guide with search, filters, sort and save",
       "100% tracker with local progress saving",
       "Saved Hub for saved pins, rides, weapons and strategies",
+      "Disclaimer / legal fan-made project page",
     ],
   },
   {
@@ -27,12 +31,14 @@ const roadmapItems = [
     status: "Planned",
     icon: "⚡",
     items: [
-      "Better AI answers by module",
-      "More vehicle and weapon demo data",
-      "Improved mobile layout",
-      "More map pins and categories",
+      "Planner summary inside Dashboard",
+      "Better AI answers for planner setups",
+      "Vehicle compare tool",
+      "Weapon compare tool",
       "Saved item notes",
-      "Better tracker categories",
+      "More demo map pins and categories",
+      "Better mobile polish",
+      "Export or copy player plan",
     ],
   },
   {
@@ -44,11 +50,19 @@ const roadmapItems = [
       "Real GTA 6 locations when reliable data is available",
       "Real vehicle stats",
       "Real weapon stats",
+      "Real mission and collectible tracking",
       "Cloud save with user accounts",
       "Advanced AI guide system",
       "Completion route planner",
+      "Personal profile and builds",
     ],
   },
+];
+
+const stats = [
+  { label: "Modules", value: "11" },
+  { label: "Status", value: "Beta" },
+  { label: "Data", value: "Demo" },
 ];
 
 export default function RoadmapPage() {
@@ -67,13 +81,27 @@ export default function RoadmapPage() {
             What is next for ViceHub?
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-300">
             ViceHub AI is a beta companion hub. Here is what already works, what
             is planned next, and what can be upgraded when reliable GTA 6 data
             becomes available.
           </p>
 
           <ModuleAskButton prompt="Explain the ViceHub AI roadmap to me." />
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-4">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-center"
+            >
+              <p className="text-3xl font-black text-white">{stat.value}</p>
+              <p className="mt-1 text-xs uppercase tracking-[0.25em] text-gray-500">
+                {stat.label}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -130,17 +158,24 @@ export default function RoadmapPage() {
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
-              href="/ai"
+              href="/planner"
               className="rounded-2xl bg-pink-600 px-6 py-3 text-sm font-black text-white transition hover:bg-pink-500"
             >
-              Open AI Hub
+              Open Planner
             </Link>
 
             <Link
-              href="/saved"
+              href="/dashboard"
+              className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-6 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20"
+            >
+              Open Dashboard
+            </Link>
+
+            <Link
+              href="/search"
               className="rounded-2xl border border-white/10 bg-black/30 px-6 py-3 text-sm font-black text-gray-300 transition hover:border-cyan-400/50 hover:text-white"
             >
-              Open Saved Hub
+              Open Search
             </Link>
           </div>
         </div>
