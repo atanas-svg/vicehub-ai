@@ -23,6 +23,13 @@ const features = [
     desc: "Search across AI, dashboard, map, vehicles, weapons, money, tracker, saved, roadmap and legal info.",
   },
   {
+    title: "Planner",
+    href: "/planner",
+    icon: "🧠",
+    status: "New",
+    desc: "Build your personal GTA 6 setup with playstyle, priority, vehicle, weapon and money strategy.",
+  },
+  {
     title: "Interactive Map",
     href: "/map",
     icon: "🗺️",
@@ -86,9 +93,9 @@ export default function FeatureGrid() {
         </h2>
 
         <p className="mx-auto mt-5 max-w-2xl text-gray-400">
-          Start with AI, search fast, then jump into dashboard progress, map
-          routes, saved items, vehicle picks, weapon loadouts, money plans,
-          roadmap updates and full completion tracking.
+          Start with AI, search fast, build your setup, then jump into dashboard
+          progress, map routes, saved items, vehicle picks, weapon loadouts,
+          money plans, roadmap updates and full completion tracking.
         </p>
       </div>
 
