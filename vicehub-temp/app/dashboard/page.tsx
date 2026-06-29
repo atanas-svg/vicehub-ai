@@ -15,6 +15,7 @@ const storageKeys = {
   money: "vicehub-saved-money-strategies",
   tracker: "vicehub-tracker-progress",
   chat: "vicehub-ask-vice-chat",
+  planner: "vicehub-player-plan",
 };
 
 const modules = [
@@ -29,6 +30,12 @@ const modules = [
     href: "/search",
     icon: "🔎",
     desc: "Find any ViceHub module fast.",
+  },
+  {
+    title: "Planner",
+    href: "/planner",
+    icon: "🧠",
+    desc: "Build your personal starter setup.",
   },
   {
     title: "Map",
@@ -102,6 +109,11 @@ function readArrayCount(key: string) {
   }
 }
 
+function readPlannerStatus() {
+  const savedPlan = localStorage.getItem(storageKeys.planner);
+  return savedPlan ? "Saved" : "Empty";
+}
+
 export default function DashboardPage() {
   const [mapPins, setMapPins] = useState(0);
   const [vehicles, setVehicles] = useState(0);
@@ -109,6 +121,7 @@ export default function DashboardPage() {
   const [money, setMoney] = useState(0);
   const [tracker, setTracker] = useState(0);
   const [chatMessages, setChatMessages] = useState(0);
+  const [plannerStatus, setPlannerStatus] = useState("Empty");
 
   function loadDashboardData() {
     setMapPins(readArrayCount(storageKeys.mapPins));
@@ -117,6 +130,7 @@ export default function DashboardPage() {
     setMoney(readArrayCount(storageKeys.money));
     setTracker(readArrayCount(storageKeys.tracker));
     setChatMessages(readArrayCount(storageKeys.chat));
+    setPlannerStatus(readPlannerStatus());
   }
 
   useEffect(() => {
@@ -143,8 +157,9 @@ export default function DashboardPage() {
     { label: "Weapons", value: weapons, icon: "🔫" },
     { label: "Money Plans", value: money, icon: "💸" },
     { label: "Tracker Done", value: tracker, icon: "✅" },
+    { label: "Player Plan", value: plannerStatus, icon: "🧠" },
     { label: "Chat Messages", value: chatMessages, icon: "🤖" },
-    { label: "Modules", value: "10", icon: "⚡" },
+    { label: "Modules", value: "11", icon: "⚡" },
   ];
 
   return (
@@ -163,14 +178,14 @@ export default function DashboardPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-300">
-            See your saved items, tracker progress, AI chat activity and quick
-            access to every ViceHub AI module from one clean dashboard.
+            See your saved items, player plan, tracker progress, AI chat
+            activity and quick access to every ViceHub AI module.
           </p>
 
           <ModuleAskButton prompt="Give me a dashboard summary and tell me what I should open next." />
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -203,10 +218,10 @@ export default function DashboardPage() {
               </div>
 
               <Link
-                href="/search"
+                href="/planner"
                 className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20"
               >
-                Open Search Hub
+                Open Planner
               </Link>
             </div>
 
@@ -251,9 +266,8 @@ export default function DashboardPage() {
               </h2>
 
               <p className="mt-4 text-sm leading-7 text-gray-400">
-                Saved pins, vehicles, weapons, money plans, tracker progress and
-                chat messages are stored locally. That means they stay after
-                refresh on this same browser.
+                Saved pins, vehicles, weapons, money plans, tracker progress,
+                player plan and chat messages are stored locally on this browser.
               </p>
             </div>
 
@@ -263,18 +277,25 @@ export default function DashboardPage() {
               </p>
 
               <h2 className="mt-3 text-3xl font-black">
-                Build your saved setup.
+                Build your full setup.
               </h2>
 
               <p className="mt-4 text-sm leading-7 text-gray-400">
-                Save one vehicle, one weapon, one money strategy and a few map
-                pins. Then open Dashboard or Saved Hub to see your full setup.
+                Open Planner first, save your personal setup, then save one
+                vehicle, one weapon, one money strategy and a few map pins.
               </p>
 
               <div className="mt-6 grid gap-3">
                 <Link
-                  href="/search"
+                  href="/planner"
                   className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-bold text-cyan-300 transition hover:bg-cyan-400/20"
+                >
+                  Build player plan
+                </Link>
+
+                <Link
+                  href="/search"
+                  className="rounded-2xl border border-white/10 bg-black/30 px-5 py-3 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
                 >
                   Search anything
                 </Link>
