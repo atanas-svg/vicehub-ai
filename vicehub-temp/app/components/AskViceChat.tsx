@@ -11,27 +11,40 @@ const STORAGE_KEY = "vicehub-ask-vice-chat";
 
 const quickPrompts = [
   "What should I do first?",
+  "Open planner?",
   "Open search?",
   "Open dashboard?",
-  "What is the roadmap?",
 ];
 
 const defaultMessages: Message[] = [
   {
     role: "vice",
-    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with search, dashboard progress, money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
+    text: "Welcome to ViceHub. Ask me anything about GTA 6. I can help with planner setup, search, dashboard progress, money, vehicles, weapons, map locations, saved items, roadmap updates and 100% completion.",
   },
 ];
 
 function getViceReply(question: string) {
   const q = question.toLowerCase().trim();
 
+  if (
+    q.includes("planner") ||
+    q.includes("setup") ||
+    q.includes("player plan") ||
+    q.includes("starter setup") ||
+    q.includes("build my setup") ||
+    q.includes("build the best") ||
+    q.includes("playstyle") ||
+    q.includes("priority")
+  ) {
+    return "Planner helps you build your personal GTA 6 setup. Choose your playstyle, main priority, starter vehicle, starter weapon and money strategy, then save it locally. Best balanced setup: Balanced playstyle, Story Progress priority, Neon Vortex vehicle, Coastal Rifle weapon and Story Missions First money plan.";
+  }
+
   if (q === "search" || q.includes("open search")) {
-    return "Open Search Hub when you want to find a ViceHub page fast. It lets you search across AI, dashboard, map, vehicles, weapons, money, tracker, saved items, roadmap and legal info.";
+    return "Open Search Hub when you want to find a ViceHub page fast. It lets you search across AI, dashboard, planner, map, vehicles, weapons, money, tracker, saved items, roadmap and legal info.";
   }
 
   if (q.includes("find module") || q.includes("find page")) {
-    return "If you are not sure which module you need, use Search Hub. Type words like money, weapons, car, saved, roadmap, tracker or legal, and it will show the best matching page.";
+    return "If you are not sure which module you need, use Search Hub. Type words like planner, money, weapons, car, saved, roadmap, tracker or legal, and it will show the best matching page.";
   }
 
   if (
@@ -51,7 +64,7 @@ function getViceReply(question: string) {
     q.includes("status") ||
     q.includes("overview")
   ) {
-    return "Dashboard is your ViceHub control center. It shows your saved items, map pins, vehicles, weapons, money plans, tracker progress and AI chat activity. Best next move: save one vehicle, one weapon, one money strategy and a few map pins, then check Dashboard again.";
+    return "Dashboard is your ViceHub control center. It shows your saved items, player plan, map pins, vehicles, weapons, money plans, tracker progress and AI chat activity. Best next move: build your Planner setup first, then save one vehicle, one weapon, one money strategy and a few map pins.";
   }
 
   if (
@@ -71,7 +84,7 @@ function getViceReply(question: string) {
     q.includes("next update") ||
     q.includes("updates")
   ) {
-    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, search, dashboard, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
+    return "ViceHub roadmap has three stages: Live Now, Next Updates and Future Vision. Right now the beta has AI, planner, search, dashboard, map, vehicles, weapons, money, tracker and saved items. Later it can be upgraded with real GTA 6 data when reliable public information becomes available.";
   }
 
   if (q.includes("disclaimer") || q.includes("legal")) {
@@ -129,7 +142,7 @@ function getViceReply(question: string) {
     q.includes("next") ||
     q.includes("plan")
   ) {
-    return "Smart start plan: finish early story missions, avoid wasting money, buy useful weapons first, get one reliable vehicle, then start tracking collectibles and side jobs. That gives you progress, money and control.";
+    return "Smart start plan: open Planner, choose Balanced playstyle, save your setup, finish early story missions, avoid wasting money, buy useful weapons first, get one reliable vehicle, then start tracking collectibles and side jobs.";
   }
 
   if (
@@ -138,10 +151,10 @@ function getViceReply(question: string) {
     q.includes("find") ||
     q.includes("where can i find")
   ) {
-    return "Search Hub is useful when you know what you want but not where it is. Try searching for money, weapons, vehicles, dashboard, saved, roadmap, tracker, map or legal.";
+    return "Search Hub is useful when you know what you want but not where it is. Try searching for planner, money, weapons, vehicles, dashboard, saved, roadmap, tracker, map or legal.";
   }
 
-  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: search, dashboard progress, money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
+  return "Good question. I am still a prototype, but my goal is to become your GTA 6 copilot: planner setup, search, dashboard progress, money plans, vehicle advice, weapon loadouts, map help, saved items, roadmap updates and 100% completion guidance in one place.";
 }
 
 export default function AskViceChat() {
@@ -229,7 +242,7 @@ export default function AskViceChat() {
     setMessages([
       {
         role: "vice",
-        text: "Chat reset. Ask me about search, dashboard, money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
+        text: "Chat reset. Ask me about planner, search, dashboard, money, vehicles, weapons, map, saved items, roadmap or 100% completion.",
       },
     ]);
 
