@@ -25,6 +25,12 @@ const modules = [
     desc: "Open the AI command center.",
   },
   {
+    title: "Search Hub",
+    href: "/search",
+    icon: "🔎",
+    desc: "Find any ViceHub module fast.",
+  },
+  {
     title: "Map",
     href: "/map",
     icon: "🗺️",
@@ -65,6 +71,12 @@ const modules = [
     href: "/roadmap",
     icon: "🌴",
     desc: "See what is planned next.",
+  },
+  {
+    title: "Disclaimer",
+    href: "/disclaimer",
+    icon: "⚖️",
+    desc: "Read legal and fan-made status.",
   },
 ];
 
@@ -132,7 +144,7 @@ export default function DashboardPage() {
     { label: "Money Plans", value: money, icon: "💸" },
     { label: "Tracker Done", value: tracker, icon: "✅" },
     { label: "Chat Messages", value: chatMessages, icon: "🤖" },
-    { label: "Build", value: "Beta", icon: "⚡" },
+    { label: "Modules", value: "10", icon: "⚡" },
   ];
 
   return (
@@ -191,10 +203,10 @@ export default function DashboardPage() {
               </div>
 
               <Link
-                href="/saved"
+                href="/search"
                 className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20"
               >
-                Open Saved Hub
+                Open Search Hub
               </Link>
             </div>
 
@@ -256,10 +268,17 @@ export default function DashboardPage() {
 
               <p className="mt-4 text-sm leading-7 text-gray-400">
                 Save one vehicle, one weapon, one money strategy and a few map
-                pins. Then open Saved Hub to see your full setup in one place.
+                pins. Then open Dashboard or Saved Hub to see your full setup.
               </p>
 
               <div className="mt-6 grid gap-3">
+                <Link
+                  href="/search"
+                  className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-bold text-cyan-300 transition hover:bg-cyan-400/20"
+                >
+                  Search anything
+                </Link>
+
                 <Link
                   href="/vehicles"
                   className="rounded-2xl border border-white/10 bg-black/30 px-5 py-3 text-sm font-bold text-gray-300 transition hover:border-pink-500/60 hover:text-white"
@@ -281,6 +300,28 @@ export default function DashboardPage() {
                   Save a money plan
                 </Link>
               </div>
+            </div>
+
+            <div className="rounded-3xl border border-pink-500/20 bg-pink-500/5 p-6">
+              <p className="text-sm uppercase tracking-[0.35em] text-pink-300">
+                Legal Status
+              </p>
+
+              <h2 className="mt-3 text-3xl font-black">
+                Fan-made beta project.
+              </h2>
+
+              <p className="mt-4 text-sm leading-7 text-gray-400">
+                ViceHub AI is independent, fan-made and uses demo data. It is
+                not an official Rockstar Games or Take-Two Interactive website.
+              </p>
+
+              <Link
+                href="/disclaimer"
+                className="mt-6 inline-flex rounded-2xl border border-pink-500/30 bg-pink-500/10 px-5 py-3 text-sm font-black text-pink-300 transition hover:bg-pink-500/20"
+              >
+                Read Disclaimer
+              </Link>
             </div>
           </div>
         </div>
