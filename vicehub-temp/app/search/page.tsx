@@ -26,6 +26,23 @@ const searchItems = [
     desc: "View saved items, tracker progress and quick module links.",
   },
   {
+    title: "Search Hub",
+    href: "/search",
+    category: "Search",
+    icon: "🔎",
+    keywords: "search find lookup module page quick find anything",
+    desc: "Search across all ViceHub modules and pages.",
+  },
+  {
+    title: "Planner",
+    href: "/planner",
+    category: "Planner",
+    icon: "🧠",
+    keywords:
+      "planner setup builder build plan playstyle priority vehicle weapon money strategy notes starter setup",
+    desc: "Build your personal GTA 6 setup with playstyle, priority, vehicle, weapon and money strategy.",
+  },
+  {
     title: "Interactive Map",
     href: "/map",
     category: "Map",
@@ -95,6 +112,8 @@ const categories = [
   "All",
   "AI",
   "Control",
+  "Search",
+  "Planner",
   "Map",
   "Vehicles",
   "Weapons",
@@ -115,7 +134,8 @@ export default function SearchPage() {
     return searchItems.filter((item) => {
       const matchesCategory = category === "All" || item.category === category;
 
-      const searchableText = `${item.title} ${item.category} ${item.keywords} ${item.desc}`.toLowerCase();
+      const searchableText =
+        `${item.title} ${item.category} ${item.keywords} ${item.desc}`.toLowerCase();
 
       const matchesQuery =
         cleanQuery.length === 0 || searchableText.includes(cleanQuery);
@@ -140,8 +160,9 @@ export default function SearchPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-300">
-            Search through ViceHub AI modules, dashboard, map, vehicles,
-            weapons, money guides, tracker, saved items, roadmap and legal info.
+            Search through ViceHub AI modules, dashboard, planner, map,
+            vehicles, weapons, money guides, tracker, saved items, roadmap and
+            legal info.
           </p>
 
           <ModuleAskButton prompt="Help me find the right ViceHub module for what I need." />
@@ -151,7 +172,7 @@ export default function SearchPage() {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search: money, weapons, dashboard, saved, roadmap..."
+            placeholder="Search: planner, money, weapons, dashboard, saved, roadmap..."
             className="w-full rounded-2xl border border-white/10 bg-black/40 px-5 py-4 text-sm text-white outline-none placeholder:text-gray-500 focus:border-pink-500/60"
           />
 
@@ -222,8 +243,8 @@ export default function SearchPage() {
           <div className="mt-10 rounded-3xl border border-pink-500/30 bg-pink-500/10 p-8 text-center">
             <h2 className="text-3xl font-black">No results found.</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-gray-400">
-              Try searching for money, weapons, vehicles, dashboard, saved,
-              roadmap, tracker or map.
+              Try searching for planner, setup, money, weapons, vehicles,
+              dashboard, saved, roadmap, tracker or map.
             </p>
           </div>
         )}
