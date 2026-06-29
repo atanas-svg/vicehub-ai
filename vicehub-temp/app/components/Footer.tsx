@@ -11,10 +11,14 @@ const moduleLinks = [
   { label: "Roadmap", href: "/roadmap" },
 ];
 
+const legalLinks = [
+  { label: "Disclaimer", href: "/disclaimer" },
+];
+
 export default function Footer() {
   return (
     <footer className="relative z-10 border-t border-white/10 bg-black/40 px-6 py-12 text-white">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.7fr]">
         <div>
           <Link
             href="/"
@@ -66,6 +70,24 @@ export default function Footer() {
           <p className="mt-5 text-xs text-gray-600">
             © 2026 ViceHub AI. Built as a beta concept.
           </p>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-black uppercase tracking-[0.35em] text-cyan-300">
+            Legal
+          </h3>
+
+          <div className="mt-5 grid gap-3">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-gray-400 transition hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>
