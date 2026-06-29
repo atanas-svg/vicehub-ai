@@ -47,11 +47,32 @@ const commandCards = [
     desc: "A clean beginner plan so you do not waste time or money early.",
     examples: ["First hour", "Early game", "Best route"],
   },
+  {
+    title: "Saved Hub",
+    icon: "⭐",
+    prompt: "Show my saved items and explain the Saved Hub.",
+    desc: "Understand saved map pins, vehicles, weapons and money strategies.",
+    examples: ["Saved items", "Favorites", "Local saves"],
+  },
+  {
+    title: "Roadmap",
+    icon: "🌴",
+    prompt: "What is the ViceHub AI roadmap?",
+    desc: "See what is live now, what is planned next and what can come later.",
+    examples: ["Next updates", "Future vision", "Beta status"],
+  },
+  {
+    title: "Disclaimer",
+    icon: "⚖️",
+    prompt: "Explain the ViceHub AI disclaimer and official Rockstar status.",
+    desc: "Learn what ViceHub is, what it is not, and how demo data is used.",
+    examples: ["Legal", "Not official", "Demo data"],
+  },
 ];
 
 const stats = [
-  { label: "AI Modes", value: "6" },
-  { label: "Modules", value: "5+" },
+  { label: "AI Modes", value: "9" },
+  { label: "Modules", value: "8+" },
   { label: "Status", value: "Beta" },
 ];
 
@@ -72,8 +93,9 @@ export default function AiPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-            Ask Vice helps you plan money, vehicles, weapons, map routes and
-            100% completion from one clean AI hub.
+            Ask Vice helps you plan money, vehicles, weapons, map routes, saved
+            items, roadmap updates, legal info and 100% completion from one
+            clean AI hub.
           </p>
 
           <ModuleAskButton prompt="Give me a smart beginner plan for GTA 6." />
