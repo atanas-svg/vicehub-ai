@@ -3,6 +3,7 @@ import Link from "next/link";
 const moduleLinks = [
   { label: "Ask Vice AI", href: "/ai" },
   { label: "Dashboard", href: "/dashboard" },
+  { label: "Search Hub", href: "/search" },
   { label: "Interactive Map", href: "/map" },
   { label: "Vehicles", href: "/vehicles" },
   { label: "Weapons", href: "/weapons" },
@@ -27,8 +28,8 @@ export default function Footer() {
           </Link>
 
           <p className="mt-4 max-w-md text-sm leading-7 text-gray-400">
-            An independent GTA 6 companion hub with AI help, dashboard, map
-            tools, vehicles, weapons, money guides, saved items, roadmap and
+            An independent GTA 6 companion hub with AI help, dashboard, search,
+            map tools, vehicles, weapons, money guides, saved items, roadmap and
             100% tracking.
           </p>
 

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const navItems = [
   { label: "AI", href: "/ai" },
   { label: "Dashboard", href: "/dashboard" },
+  { label: "Search", href: "/search" },
   { label: "Map", href: "/map" },
   { label: "Vehicles", href: "/vehicles" },
   { label: "Weapons", href: "/weapons" },
@@ -81,7 +82,7 @@ export default function Navbar() {
           VICEHUB AI
         </Link>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           {navItems.map((item) => {
             const active = pathname === item.href;
             const isSaved = item.href === "/saved";
@@ -112,14 +113,14 @@ export default function Navbar() {
 
         <button
           onClick={() => setOpen((value) => !value)}
-          className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white md:hidden"
+          className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white lg:hidden"
         >
           {open ? "Close" : "Menu"}
         </button>
       </div>
 
       {open && (
-        <div className="mx-auto mt-4 max-w-7xl rounded-3xl border border-white/10 bg-zinc-950/95 p-4 shadow-[0_0_35px_rgba(236,72,153,0.18)] md:hidden">
+        <div className="mx-auto mt-4 max-w-7xl rounded-3xl border border-white/10 bg-zinc-950/95 p-4 shadow-[0_0_35px_rgba(236,72,153,0.18)] lg:hidden">
           <div className="grid gap-2">
             {navItems.map((item) => {
               const active = pathname === item.href;
